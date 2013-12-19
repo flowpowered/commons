@@ -1,0 +1,32 @@
+# Source language and JDK version to use
+language: java
+jdk: oraclejdk7
+
+# Compile and package JAR and set build properties
+install: mvn package -DbuildNumber=$TRAVIS_BUILD_NUMBER -Dci=travis -Dcommit=${TRAVIS_COMMIT:0:7}
+
+# Perform steps after compilation/test success
+after_success:
+  # Generate Javadocs and Cobertura report for Coveralls.io
+  - "mvn javadoc:javadoc cobertura:cobertura coveralls:cobertura -DserviceJobId=$TRAVIS_JOB_ID"
+  # Get files for use with build, namely the custom Maven settings.xml
+  - "git clone https://github.com/flow/travis-ci-resources.git target/travis"
+  # Check if commit is not a pull request, if git repo is official, and if branch is master, then deploy artifacts to Maven repository
+  - "[[ $TRAVIS_PULL_REQUEST == false ]] && [[ $TRAVIS_REPO_SLUG == flow/flow-commons ]] && [[ $TRAVIS_BRANCH == master ]] && mvn deploy --settings target/travis/settings.xml"
+
+# Notification services
+notifications:
+  # Disable build status email notifications, until the issue with forks is fixed
+  email: false
+  webhooks:
+    # Send build information and status to Notifico
+    - http://n.tkte.ch/h/1813/FJiUvk7ps9NF6ooB8Jy0hpiY
+
+# Environmental system variables
+env:
+  global:
+    # Make the log output cleaner
+    - TERM=dumb
+    # Super secure, encrypted variables! Ssssh!
+    - secure: "JuUPH0I5Wov7pnisY/BjUDCHDrBFswz3deV7sQ5pzqlIBN3Vfyfd7E3hKf4kL/yYwL3fh1CN14XC/NnLEDIdqYv+2AViUIMu5KBN1Oa3X8V/kcXqo6fjusXAAUsVEuTneCjM0ImmfEReUOY0FO6bPNDF6BK252X9rsw7D6UmP+E="
+    - secure: "hs6owoXOpMsg09PnJYjQi2bwFeqsARdbk4qyPZg8gFj/Zxe2m8RJzyWVDufpFSI25n7AnSeN7Bos9zPwHrvpPYzoudYIC3gudOh9MMT81tqk7qqWUy6fY1oVwyl1Lu7FwhLLO2a1JWDJcFF9Jbg8EtziiuZW+WYYksoM8CvagK8="
