@@ -113,30 +113,30 @@
 
     <!-- Project dependencies -->
     <dependencies>
-        <!-- Provided by third-party -->
+        <!-- Include in final JAR -->
         <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
             <version>2.11</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.0-beta9</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.0-beta9</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -226,6 +226,45 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+            </plugin>
+            <!-- Dependency addition plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>lib/**</exclude>
+                                        <exclude>templates/**</exclude>
+                                        <exclude>META-INF/*.xml</exclude>
+                                        <exclude>META-INF/*.txt</exclude>
+                                        <exclude>**/LICENSE</exclude>
+                                        <exclude>**/NOTICE</exclude>
+                                        <exclude>**/DEPENDENCIES</exclude>
+                                        <exclude>**/*.java</exclude>
+                                        <exclude>Log4j-**.**</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.flowpowered:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Coveralls reporting plugin  -->
             <plugin>
