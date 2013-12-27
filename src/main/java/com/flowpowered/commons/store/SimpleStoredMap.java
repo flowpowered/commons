@@ -35,89 +35,89 @@ import org.apache.commons.lang3.tuple.Pair;
  * Represents a map for mapping Strings to and Object. All conversions are cached in a store.
  */
 public class SimpleStoredMap<T> implements StoredMap<T> {
-    protected final SimpleStore<T> store;
-    protected final String name;
+	protected final SimpleStore<T> store;
+	protected final String name;
 
-    /**
-     * @param store the store to store ids
-     * @param name The name of this StringMap
-     */
-    public SimpleStoredMap(SimpleStore<T> store, String name) {
-        this.store = store;
-        this.name = name;
-    }
+	/**
+	 * @param store the store to store ids
+	 * @param name The name of this StringMap
+	 */
+	public SimpleStoredMap(SimpleStore<T> store, String name) {
+		this.store = store;
+		this.name = name;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Registers a key/id pair with the map.  If the id is already in use the method will fail.<br> <br> The id must be lower than the min id for the map to prevent clashing with the dynamically
-     * allocated ids
-     *
-     * @param key the key to be added
-     * @param value the desired value to be matched to the key
-     * @return true if the key/id pair was successfully registered
-     * @throws IllegalArgumentException if the id >= minId
-     */
-    @Override
-    public boolean register(String key, T value) {
-        return store.setIfAbsent(key, value);
-    }
+	/**
+	 * Registers a key/id pair with the map.  If the id is already in use the method will fail.<br> <br> The id must be lower than the min id for the map to prevent clashing with the dynamically
+	 * allocated ids
+	 *
+	 * @param key the key to be added
+	 * @param value the desired value to be matched to the key
+	 * @return true if the key/id pair was successfully registered
+	 * @throws IllegalArgumentException if the id >= minId
+	 */
+	@Override
+	public boolean register(String key, T value) {
+		return store.setIfAbsent(key, value);
+	}
 
-    /**
-     * Gets the String corresponding to a given int.
-     *
-     * @return the String or null if no match
-     */
-    @Override
-    public String getString(T value) {
-        return store.reverseGet(value);
-    }
+	/**
+	 * Gets the String corresponding to a given int.
+	 *
+	 * @return the String or null if no match
+	 */
+	@Override
+	public String getString(T value) {
+		return store.reverseGet(value);
+	}
 
-    /**
-     * Gets the int corresponding to a given String
-     *
-     * @param key The key
-     * @return The int or null if no match
-     */
-    @Override
-    public T getValue(String key) {
-        return store.get(key);
-    }
+	/**
+	 * Gets the int corresponding to a given String
+	 *
+	 * @param key The key
+	 * @return The int or null if no match
+	 */
+	@Override
+	public T getValue(String key) {
+		return store.get(key);
+	}
 
-    /**
-     * Saves the map to the persistence system
-     *
-     * @return returns true if the map saves correctly
-     */
-    @Override
-    public boolean save() {
-        return store.save();
-    }
+	/**
+	 * Saves the map to the persistence system
+	 *
+	 * @return returns true if the map saves correctly
+	 */
+	@Override
+	public boolean save() {
+		return store.save();
+	}
 
-    /**
-     * Returns a collection of all keys for all (key, value) pairs within the Store
-     *
-     * @return returns a Collection containing all the keys
-     */
-    @Override
-    public Collection<String> getKeys() {
-        return store.getKeys();
-    }
+	/**
+	 * Returns a collection of all keys for all (key, value) pairs within the Store
+	 *
+	 * @return returns a Collection containing all the keys
+	 */
+	@Override
+	public Collection<String> getKeys() {
+		return store.getKeys();
+	}
 
-    @Override
-    public List<Pair<T, String>> getItems() {
-        List<Pair<T, String>> items = new ArrayList<>();
-        for (Map.Entry<String, T> entry : store.getEntrySet()) {
-            items.add(new ImmutablePair<>(entry.getValue(), entry.getKey()));
-        }
-        return items;
-    }
+	@Override
+	public List<Pair<T, String>> getItems() {
+		List<Pair<T, String>> items = new ArrayList<>();
+		for (Map.Entry<String, T> entry : store.getEntrySet()) {
+			items.add(new ImmutablePair<>(entry.getValue(), entry.getKey()));
+		}
+		return items;
+	}
 
-    @Override
-    public void clear() {
-        store.clear();
-    }
+	@Override
+	public void clear() {
+		store.clear();
+	}
 }

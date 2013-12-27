@@ -45,6 +45,7 @@ public class JLineConsole {
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final CommandCallback callback;
     private final Logger logger;
+    private final ConsoleCommandThread commandThread;
 
     public JLineConsole(CommandCallback callback, List<Completer> completers) {
         this(callback, completers, LogManager.getLogger("JLineConsole"));
@@ -55,7 +56,7 @@ public class JLineConsole {
         this.logger = logger;
 
         try {
-            this.reader = new ConsoleReader();
+            reader = new ConsoleReader();
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -69,7 +70,7 @@ public class JLineConsole {
         list[list.length - 1] = new NullCompleter();
         reader.addCompleter(new ArgumentCompleter(list));
 
-        ConsoleCommandThread commandThread = new ConsoleCommandThread();
+        commandThread = new ConsoleCommandThread();
         commandThread.start();
     }
 
@@ -113,5 +114,9 @@ public class JLineConsole {
             // TODO: Maybe it should be warn instead of error?
             logger.error("Exception when trying to close console command input:", ex);
         }
+    }
+
+    public Thread getCommandThread() {
+        return commandThread;
     }
 }
