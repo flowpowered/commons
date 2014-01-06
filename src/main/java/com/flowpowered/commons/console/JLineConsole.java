@@ -34,8 +34,9 @@ import jline.console.completer.ArgumentCompleter;
 import jline.console.completer.Completer;
 import jline.console.completer.NullCompleter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * A JLine console wrapper.
@@ -48,7 +49,7 @@ public class JLineConsole {
     private final ConsoleCommandThread commandThread;
 
     public JLineConsole(CommandCallback callback, List<Completer> completers) {
-        this(callback, completers, LogManager.getLogger("JLineConsole"));
+        this(callback, completers, LoggerFactory.getLogger("JLineConsole"));
     }
 
     public JLineConsole(CommandCallback callback, List<Completer> completers, Logger logger) {
