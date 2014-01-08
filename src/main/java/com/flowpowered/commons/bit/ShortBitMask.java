@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.flowpowered.commons.bytebit;
+package com.flowpowered.commons.bit;
 
-public interface ByteBitMask {
+public interface ShortBitMask {
 	/**
-	 * Gets the bit byte mask for this object
+	 * Gets the bit short mask for this object
 	 *
 	 * @return the bit mask
 	 */
-	public byte getMask();
+	public short getMask();
 }

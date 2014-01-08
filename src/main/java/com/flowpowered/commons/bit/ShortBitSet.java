@@ -21,37 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.flowpowered.commons.bytebit;
+package com.flowpowered.commons.bit;
 
 import com.flowpowered.commons.LogicUtil;
 
-public class ByteBitSet {
-	private byte flag;
+public class ShortBitSet implements ShortBitMask {
+	private short flag;
 
-	public ByteBitSet() {
+	public ShortBitSet() {
 		this.flag = 0;
 	}
 
-	public ByteBitSet(int flag) {
-		this.flag = (byte) flag;
+	public ShortBitSet(int flag) {
+		this.flag = (short) flag;
 	}
 
-	public ByteBitSet(ByteBitMask flag) {
+	public ShortBitSet(ShortBitMask flag) {
 		this.flag = flag.getMask();
 	}
 
-	public ByteBitSet(ByteBitMask... flags) {
+	public ShortBitSet(ShortBitMask... flags) {
 		this.flag = 0;
-		for (ByteBitMask flag : flags) {
+		for (ShortBitMask flag : flags) {
 			this.flag |= flag.getMask();
 		}
-	}
-
-	/**
-	 * Checks if a bit in this flag is set
-	 */
-	public boolean isDirty() {
-		return this.flag != 0;
 	}
 
 	/**
@@ -59,7 +52,7 @@ public class ByteBitSet {
 	 *
 	 * @return the current flag
 	 */
-	public byte get() {
+	public short get() {
 		return this.flag;
 	}
 
@@ -69,7 +62,7 @@ public class ByteBitSet {
 	 * @param mask to use
 	 * @return True if all of the bits in the mask are set, False if not
 	 */
-	public boolean get(ByteBitMask mask) {
+	public boolean isEqual(ShortBitMask mask) {
 		return LogicUtil.getBit(this.flag, mask.getMask());
 	}
 
@@ -79,16 +72,16 @@ public class ByteBitSet {
 	 * @param mask containing the bit flags
 	 * @return True if one of the bits in the mask are set, False if not
 	 */
-	public boolean getAny(ByteBitMask mask) {
+	public boolean isAny(ShortBitMask mask) {
 		return (this.flag & mask.getMask()) != 0;
 	}
 
 	/**
 	 * Sets the current flag
 	 *
-	 * @param flag to set to
+	 * @param mask to set to
 	 */
-	public void set(ByteBitMask mask) {
+	public void set(ShortBitMask mask) {
 		this.flag = mask.getMask();
 	}
 
@@ -97,7 +90,7 @@ public class ByteBitSet {
 	 *
 	 * @param flag to set to
 	 */
-	public void set(byte flag) {
+	public void set(short flag) {
 		this.flag = flag;
 	}
 
@@ -107,7 +100,13 @@ public class ByteBitSet {
 	 * @param mask to use
 	 * @param value to set the bit to
 	 */
-	public void set(ByteBitMask mask, boolean value) {
+	public void set(ShortBitMask mask, boolean value) {
 		this.flag = LogicUtil.setBit(this.flag, mask.getMask(), value);
 	}
+
+    @Override
+    public short getMask() {
+        return flag;
+    }
+
 }
