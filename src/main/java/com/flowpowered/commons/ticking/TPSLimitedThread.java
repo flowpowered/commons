@@ -23,7 +23,6 @@
  */
 package com.flowpowered.commons.ticking;
 
-import org.lwjgl.Sys;
 
 /**
  * Represents a thread that runs at a specific TPS until terminated.
@@ -61,6 +60,6 @@ public class TPSLimitedThread extends Thread {
     }
 
     private static long getTime() {
-        return Sys.getTime() * 1000000000 / Sys.getTimerResolution();
+        return System.nanoTime();
     }
 }

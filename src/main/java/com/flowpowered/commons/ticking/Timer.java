@@ -26,7 +26,6 @@ package com.flowpowered.commons.ticking;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.lwjgl.Sys;
 
 /**
  * A time class. Calling the {@link #sync()} method at the end of each tick will cause the thread to sleep for the correct time delay between the ticks. {@link #start()} must be called just before the
@@ -126,7 +125,7 @@ public class Timer {
 
     // Get the system time in nanoseconds
     private static long getTime() {
-        return Sys.getTime() * 1000000000 / Sys.getTimerResolution();
+        return System.nanoTime();
     }
 
     // Holds a number of run times for averaging
