@@ -201,9 +201,9 @@
                     <execution>
                         <configuration>
                             <properties>
-                                <project>${project.name}</project>
+                                <name>${project.name}</name>
                                 <year>${project.inceptionYear}</year>
-                                <name>${project.organization.name}</name>
+                                <organization>${project.organization.name}</organization>
                                 <url>${project.organization.url}</url>
                             </properties>
                             <quiet>true</quiet>

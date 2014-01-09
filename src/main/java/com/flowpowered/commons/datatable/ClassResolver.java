@@ -1,7 +1,7 @@
 /*
- * This file is part of Spout LLC, licensed under the MIT License (MIT).
+ * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 ${organization} <http://www.spout.org/>
+ * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
