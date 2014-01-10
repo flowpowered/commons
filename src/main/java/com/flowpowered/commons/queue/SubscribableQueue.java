@@ -26,6 +26,7 @@ package com.flowpowered.commons.queue;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -37,15 +38,20 @@ import java.util.concurrent.atomic.AtomicLong;
  * the queue before being able to use it, using {@link #subscribe()}. The queue to use is selected from the calling thread, using {@link Thread#currentThread()}. Once done, a thread should unsubscribe
  * using {@link #unsubscribe()}.
  * <p/>
- * When a thread constructs a new {@link SubscribableQueue}, it can declared itself as the publisher thread, and the operation of the following methods is limited to
- * that thread only: {@link #unsubscribeAll()}. The following operations operate on all queues if called by the publisher, else on the thread's own queue: {@link #add(Object)}, {@link
- * #addAll(java.util.Collection)}, {@link #offer(Object)}.
+ * When a thread constructs a new {@link SubscribableQueue}, it can declared itself as the publisher thread, and the operation of the following methods is limited to that thread only: {@link
+ * #unsubscribeAll()}. The following operations operate on all queues if called by the publisher, else on the thread's own queue: {@link #add(Object)}, {@link #addAll(java.util.Collection)}, {@link
+ * #offer(Object)}.
  * <p/>
- * Call to methods can be expensive because of the cost of {@link Thread#currentThread()} on certain platforms. Using mass removal or addition operations ({@link #removeAll(java.util.Collection)},
+ * It's possible to add objects for only specific subscribers, as long as they have provided a non-null identifier object when using {@link #subscribe(Object)}, and that the publisher knows which
+ * object corresponds to which thread. Calling {@link #add(Object, Object)}, {@link #addAll(java.util.Collection, Object)} or {@link #offer(Object, Object)} using a valid identifier will ensure that
+ * the object is only passed to the desired subscriber.
+ * <p/>
+ * Calls to methods can be expensive because of the cost of {@link Thread#currentThread()} on certain platforms. Using mass removal or addition operations ({@link #removeAll(java.util.Collection)},
  * {@link #addAll(java.util.Collection)}) is recommended when multiple items need to be removed or added.
  */
 public class SubscribableQueue<T> implements Queue<T> {
-    private final Map<Object, Queue<T>> queues = new ConcurrentHashMap<>();
+    private final Map<Long, Queue<T>> queues = new ConcurrentHashMap<>();
+    private Map<Object, Long> subscriberIdentifiers;
     private final AtomicLong publisherThreadID = new AtomicLong();
 
     /**
@@ -93,14 +99,39 @@ public class SubscribableQueue<T> implements Queue<T> {
      * Subscribes the thread to the queue.
      */
     public void subscribe() {
-        queues.put(Thread.currentThread().getId(), new ConcurrentLinkedQueue<T>());
+        subscribe(null);
+    }
+
+    /**
+     * Subscribes the thread to the queue, providing an identifier object to allow the publisher to recognize and target the subscriber (if not null).
+     *
+     * @param identifier The identifier object, can be null
+     */
+    public void subscribe(Object identifier) {
+        final long id = Thread.currentThread().getId();
+        queues.put(id, new ConcurrentLinkedQueue<T>());
+        if (identifier != null) {
+            if (subscriberIdentifiers == null) {
+                subscriberIdentifiers = new ConcurrentHashMap<>();
+            }
+            subscriberIdentifiers.put(identifier, id);
+        }
     }
 
     /**
      * Unsubscribes the thread from the queue.
      */
     public void unsubscribe() {
-        queues.remove(Thread.currentThread().getId());
+        final long id = Thread.currentThread().getId();
+        queues.remove(id);
+        if (subscriberIdentifiers != null) {
+            for (Iterator<Entry<Object, Long>> iterator = subscriberIdentifiers.entrySet().iterator(); iterator.hasNext(); ) {
+                if (id == iterator.next().getValue()) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -109,16 +140,37 @@ public class SubscribableQueue<T> implements Queue<T> {
     public void unsubscribeAll() {
         checkPublisherThread();
         queues.clear();
+        if (subscriberIdentifiers != null) {
+            subscriberIdentifiers.clear();
+        }
     }
 
     @Override
     public boolean add(T t) {
-        checkNotNull(t);
+        return add(t, null);
+    }
+
+    /**
+     * Adds an object to the queue, targeting only the subscriber identified by the provided identifier object, unless said object is null. The added object will only be visible to the subscriber.
+     *
+     * @param t The object to add
+     * @param identifier The identifier object
+     * @return True if this queue changed as a result of the call
+     * @see #add(Object)
+     */
+    public boolean add(T t, Object identifier) {
+        checkNotNullArgument(t);
         if (isPublisherThread()) {
             boolean changed = false;
-            for (Queue<T> queue : queues.values()) {
-                if (queue.add(t)) {
-                    changed = true;
+            if (identifier != null) {
+                final Long id = subscriberIdentifiers.get(identifier);
+                checkNotNullIdentifier(id);
+                changed = queues.get(id).add(t);
+            } else {
+                for (Queue<T> queue : queues.values()) {
+                    if (queue.add(t)) {
+                        changed = true;
+                    }
                 }
             }
             return changed;
@@ -128,12 +180,31 @@ public class SubscribableQueue<T> implements Queue<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        checkNotNull(c);
+        return addAll(c, null);
+    }
+
+    /**
+     * Adds a collection of objects to the queue, targeting only the subscriber identified by the provided identifier object, unless said object is null. The added objects will only be visible to the
+     * subscriber.
+     *
+     * @param c The collection of objects to add
+     * @param identifier The identifier object, can be null
+     * @return True if this queue changed as a result of the call
+     * @see #addAll(java.util.Collection)
+     */
+    public boolean addAll(Collection<? extends T> c, Object identifier) {
+        checkNotNullArgument(c);
         if (isPublisherThread()) {
             boolean changed = false;
-            for (Queue<T> queue : queues.values()) {
-                if (queue.addAll(c)) {
-                    changed = true;
+            if (identifier != null) {
+                final Long id = subscriberIdentifiers.get(identifier);
+                checkNotNullIdentifier(id);
+                changed = queues.get(id).addAll(c);
+            } else {
+                for (Queue<T> queue : queues.values()) {
+                    if (queue.addAll(c)) {
+                        changed = true;
+                    }
                 }
             }
             return changed;
@@ -143,12 +214,31 @@ public class SubscribableQueue<T> implements Queue<T> {
 
     @Override
     public boolean offer(T t) {
-        checkNotNull(t);
+        return offer(t, null);
+    }
+
+    /**
+     * Offers an object to the queue, targeting only the subscriber identified by the provided identifier object, unless said object is null. The offered object will only be visible to the subscriber
+     * (if added).
+     *
+     * @param t The offered object
+     * @param identifier The identifier object, can be null
+     * @return True if this queue changed as a result of the call
+     * @see #offer(Object)
+     */
+    public boolean offer(T t, Object identifier) {
+        checkNotNullArgument(t);
         if (isPublisherThread()) {
             boolean changed = false;
-            for (Queue<T> queue : queues.values()) {
-                if (queue.offer(t)) {
-                    changed = true;
+            if (identifier != null) {
+                final Long id = subscriberIdentifiers.get(identifier);
+                checkNotNullIdentifier(id);
+                changed = queues.get(id).offer(t);
+            } else {
+                for (Queue<T> queue : queues.values()) {
+                    if (queue.offer(t)) {
+                        changed = true;
+                    }
                 }
             }
             return changed;
@@ -203,7 +293,7 @@ public class SubscribableQueue<T> implements Queue<T> {
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        checkNotNull(a);
+        checkNotNullArgument(a);
         return getCurrentThreadQueue().toArray(a);
     }
 
@@ -214,19 +304,19 @@ public class SubscribableQueue<T> implements Queue<T> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        checkNotNull(c);
+        checkNotNullArgument(c);
         return getCurrentThreadQueue().containsAll(c);
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        checkNotNull(c);
+        checkNotNullArgument(c);
         return getCurrentThreadQueue().removeAll(c);
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        checkNotNull(c);
+        checkNotNullArgument(c);
         return getCurrentThreadQueue().retainAll(c);
     }
 
@@ -243,9 +333,15 @@ public class SubscribableQueue<T> implements Queue<T> {
         return queue;
     }
 
-    private void checkNotNull(Object o) {
+    private void checkNotNullArgument(Object o) {
         if (o == null) {
             throw new IllegalArgumentException("Argument cannot be null");
+        }
+    }
+
+    private void checkNotNullIdentifier(Object o) {
+        if (o == null) {
+            throw new IllegalArgumentException("Identifier does not match any subscriber");
         }
     }
 
