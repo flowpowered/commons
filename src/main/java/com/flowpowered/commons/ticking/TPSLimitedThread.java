@@ -23,7 +23,6 @@
  */
 package com.flowpowered.commons.ticking;
 
-
 /**
  * Represents a thread that runs at a specific TPS until terminated.
  */
@@ -44,9 +43,17 @@ public class TPSLimitedThread extends Thread {
         timer.start();
         long lastTime = getTime() - (long) (1f / timer.getTps() * 1000000000), currentTime;
         while (running) {
-            element.onTick((currentTime = getTime()) - lastTime);
-            lastTime = currentTime;
-            timer.sync();
+            try {
+                element.onTick((currentTime = getTime()) - lastTime);
+                lastTime = currentTime;
+                timer.sync();
+            } catch (Exception ex) {
+                System.err.println("Exception in ticking thread, stopping");
+                ex.printStackTrace();
+                System.out.println("Attempting to stop normally");
+                element.onStop();
+                break;
+            }
         }
         element.onStop();
     }
