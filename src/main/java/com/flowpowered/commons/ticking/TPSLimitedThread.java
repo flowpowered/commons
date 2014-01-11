@@ -52,7 +52,7 @@ public class TPSLimitedThread extends Thread {
                 ex.printStackTrace();
                 System.out.println("Attempting to stop normally");
                 element.onStop();
-                break;
+                return;
             }
         }
         element.onStop();
