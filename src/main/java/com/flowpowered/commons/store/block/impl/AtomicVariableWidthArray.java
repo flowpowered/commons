@@ -26,7 +26,7 @@ package com.flowpowered.commons.store.block.impl;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-import org.spout.math.GenericMath;
+import com.flowpowered.math.GenericMath;
 
 /**
  * This class implements a variable width Atomic array.  It is backed by an AtomicInteger array.<br> <br> Entries widths can be a power of 2 from 1 to 32
@@ -284,9 +284,9 @@ public class AtomicVariableWidthArray implements Serializable {
         return packed;
     }
 
-	/*
+    /*
      * Remaining methods use the above methods
-	 */
+     */
 
     public int addAndGet(int i, int delta) {
         return addAndGet(i, delta, false);

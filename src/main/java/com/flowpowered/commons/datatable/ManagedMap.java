@@ -32,14 +32,14 @@ import com.flowpowered.commons.datatable.delta.DeltaMap;
  */
 public interface ManagedMap extends SerializableMap {
 
-	/**
-	 * This will return a map containing any modified elements. Any sub-maps will also be DeltaMaps if applicable.
-	 *
-	 * @return the delta map
-	 */
-	public DeltaMap getDeltaMap();
+    /**
+     * This will return a map containing any modified elements. Any sub-maps will also be DeltaMaps if applicable.
+     *
+     * @return the delta map
+     */
+    public DeltaMap getDeltaMap();
 
-	public void resetDelta();
+    public void resetDelta();
 
     void deserialize(byte[] data, boolean wipe, boolean updateDelta) throws IOException;
 }

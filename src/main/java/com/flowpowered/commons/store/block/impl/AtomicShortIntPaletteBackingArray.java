@@ -26,7 +26,7 @@ package com.flowpowered.commons.store.block.impl;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-import org.spout.math.GenericMath;
+import com.flowpowered.math.GenericMath;
 
 public class AtomicShortIntPaletteBackingArray extends AtomicShortIntBackingArray {
     private final static int CALCULATE_UNIQUE = -1;

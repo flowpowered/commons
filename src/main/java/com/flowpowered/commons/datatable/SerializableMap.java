@@ -29,44 +29,44 @@ import java.io.Serializable;
 import com.flowpowered.commons.datatable.defaulted.DefaultedMap;
 
 public interface SerializableMap extends DefaultedMap<Serializable>, Serializable {
-	/**
-	 * Serializes the information in this map into an array of bytes.
-	 *
-	 * This information can be used to reconstruct a deep copy of the map, or for persistence.
-	 *
-	 * @return serialized bytes
-	 */
-	public byte[] serialize();
+    /**
+     * Serializes the information in this map into an array of bytes.
+     *
+     * This information can be used to reconstruct a deep copy of the map, or for persistence.
+     *
+     * @return serialized bytes
+     */
+    public byte[] serialize();
 
-	/**
-	 * Deserializes the array of information into the contents of the map. This will wipe all previous data in the map.
-	 *
-	 * @param data to deserialize
-	 * @throws IOException if an error in deserialization occurred
-	 */
-	public void deserialize(byte[] data) throws IOException;
+    /**
+     * Deserializes the array of information into the contents of the map. This will wipe all previous data in the map.
+     *
+     * @param data to deserialize
+     * @throws IOException if an error in deserialization occurred
+     */
+    public void deserialize(byte[] data) throws IOException;
 
-	/**
-	 * Deserializes the array of information into the contents of the map.
-	 *
-	 * @param data to deserialize
-	 * @param wipe true if the previous data in the map should be wiped
-	 * @throws IOException if an error in deserialization occurred
-	 */
-	public void deserialize(byte[] data, boolean wipe) throws IOException;
+    /**
+     * Deserializes the array of information into the contents of the map.
+     *
+     * @param data to deserialize
+     * @param wipe true if the previous data in the map should be wiped
+     * @throws IOException if an error in deserialization occurred
+     */
+    public void deserialize(byte[] data, boolean wipe) throws IOException;
 
-	/**
-	 * Returns a deep copy of this map
-	 *
-	 * @return deep copy
-	 */
-	public SerializableMap deepCopy();
+    /**
+     * Returns a deep copy of this map
+     *
+     * @return deep copy
+     */
+    public SerializableMap deepCopy();
 
-	/**
-	 * Returns the value to which the specified key is mapped, or {@code null} if this map contains no mapping for the key, or the value is not a type or subtype of the given class.
-	 *
-	 * @param key the key whose associated value is to be returned
-	 * @return the value to which the specified key is mapped, or {@code null} if this map contains no mapping for the key
-	 */
-	public <T> T get(String key, Class<T> clazz);
+    /**
+     * Returns the value to which the specified key is mapped, or {@code null} if this map contains no mapping for the key, or the value is not a type or subtype of the given class.
+     *
+     * @param key the key whose associated value is to be returned
+     * @return the value to which the specified key is mapped, or {@code null} if this map contains no mapping for the key
+     */
+    public <T> T get(String key, Class<T> clazz);
 }

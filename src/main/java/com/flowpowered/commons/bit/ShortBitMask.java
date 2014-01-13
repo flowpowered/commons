@@ -24,10 +24,10 @@
 package com.flowpowered.commons.bit;
 
 public interface ShortBitMask {
-	/**
-	 * Gets the bit short mask for this object
-	 *
-	 * @return the bit mask
-	 */
-	public short getMask();
+    /**
+     * Gets the bit short mask for this object
+     *
+     * @return the bit mask
+     */
+    public short getMask();
 }

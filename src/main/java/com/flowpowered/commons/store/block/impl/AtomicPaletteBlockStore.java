@@ -29,7 +29,7 @@ import com.flowpowered.commons.store.block.AtomicBlockStore;
 
 import gnu.trove.set.hash.TIntHashSet;
 
-import org.spout.math.vector.Vector3i;
+import com.flowpowered.math.vector.Vector3i;
 
 public class AtomicPaletteBlockStore implements AtomicBlockStore {
     private final int shift;

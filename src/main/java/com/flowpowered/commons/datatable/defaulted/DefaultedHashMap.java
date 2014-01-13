@@ -31,65 +31,65 @@ import java.util.Map;
  * An implementation of {@link DefaultedMap} using a HashMap
  */
 public class DefaultedHashMap<V extends Serializable> extends HashMap<String, V> implements DefaultedMap<V> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DefaultedHashMap(int initialCapacity, float loadFactor) {
-		super(initialCapacity, loadFactor);
-	}
+    public DefaultedHashMap(int initialCapacity, float loadFactor) {
+        super(initialCapacity, loadFactor);
+    }
 
-	public DefaultedHashMap(int initialCapacity) {
-		super(initialCapacity);
-	}
+    public DefaultedHashMap(int initialCapacity) {
+        super(initialCapacity);
+    }
 
-	public DefaultedHashMap() {
-	}
+    public DefaultedHashMap() {
+    }
 
-	public DefaultedHashMap(Map<? extends String, ? extends V> m) {
-		super(m);
-	}
+    public DefaultedHashMap(Map<? extends String, ? extends V> m) {
+        super(m);
+    }
 
-	@Override
-	@SuppressWarnings ("unchecked")
-	public <T extends V> T get(Object key, T defaultValue) {
-		V value = get(key);
-		if (value == null) {
-			value = defaultValue;
-		}
+    @Override
+    @SuppressWarnings ("unchecked")
+    public <T extends V> T get(Object key, T defaultValue) {
+        V value = get(key);
+        if (value == null) {
+            value = defaultValue;
+        }
 
-		return (T) value;
-	}
+        return (T) value;
+    }
 
-	@Override
-	public <T extends V> T get(DefaultedKey<T> key) {
-		return get(key.getKeyString(), key.getDefaultValue());
-	}
+    @Override
+    public <T extends V> T get(DefaultedKey<T> key) {
+        return get(key.getKeyString(), key.getDefaultValue());
+    }
 
-	@Override
-	@SuppressWarnings ("unchecked")
-	public <T extends V> T put(DefaultedKey<T> key, T value) {
-		try {
-			return (T) put(key.getKeyString(), value);
-		} catch (ClassCastException e) {
-			return null;
-		}
-	}
+    @Override
+    @SuppressWarnings ("unchecked")
+    public <T extends V> T put(DefaultedKey<T> key, T value) {
+        try {
+            return (T) put(key.getKeyString(), value);
+        } catch (ClassCastException e) {
+            return null;
+        }
+    }
 
-	@Override
-	@SuppressWarnings ("unchecked")
-	public <T extends V> T putIfAbsent(DefaultedKey<T> key, T value) {
-		try {
-			return (T) putIfAbsent(key.getKeyString(), value);
-		} catch (ClassCastException e) {
-			return null;
-		}
-	}
+    @Override
+    @SuppressWarnings ("unchecked")
+    public <T extends V> T putIfAbsent(DefaultedKey<T> key, T value) {
+        try {
+            return (T) putIfAbsent(key.getKeyString(), value);
+        } catch (ClassCastException e) {
+            return null;
+        }
+    }
 
-	@Override
-	public V putIfAbsent(String key, V value) {
-		if (!containsKey(key)) {
-			return put(key, value);
-		} else {
-			return get(key);
-		}
-	}
+    @Override
+    public V putIfAbsent(String key, V value) {
+        if (!containsKey(key)) {
+            return put(key, value);
+        } else {
+            return get(key);
+        }
+    }
 }

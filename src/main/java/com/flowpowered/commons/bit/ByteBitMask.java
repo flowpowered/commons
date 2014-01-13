@@ -24,10 +24,10 @@
 package com.flowpowered.commons.bit;
 
 public interface ByteBitMask {
-	/**
-	 * Gets the bit byte mask for this object
-	 *
-	 * @return the bit mask
-	 */
-	public byte getMask();
+    /**
+     * Gets the bit byte mask for this object
+     *
+     * @return the bit mask
+     */
+    public byte getMask();
 }

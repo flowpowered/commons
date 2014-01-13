@@ -26,21 +26,21 @@ package com.flowpowered.commons.datatable.defaulted;
 import java.io.Serializable;
 
 public class DefaultedKeyImpl<T extends Serializable> implements DefaultedKey<T> {
-	private final T defaultValue;
-	private final String key;
+    private final T defaultValue;
+    private final String key;
 
-	public DefaultedKeyImpl(String key, T defaultValue) {
-		this.key = key;
-		this.defaultValue = defaultValue;
-	}
+    public DefaultedKeyImpl(String key, T defaultValue) {
+        this.key = key;
+        this.defaultValue = defaultValue;
+    }
 
-	@Override
-	public T getDefaultValue() {
-		return defaultValue;
-	}
+    @Override
+    public T getDefaultValue() {
+        return defaultValue;
+    }
 
-	@Override
-	public String getKeyString() {
-		return key;
-	}
+    @Override
+    public String getKeyString() {
+        return key;
+    }
 }

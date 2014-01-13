@@ -26,83 +26,83 @@ package com.flowpowered.commons.bit;
 import com.flowpowered.commons.LogicUtil;
 
 public class ShortBitSet implements ShortBitMask {
-	private short flag;
+    private short flag;
 
-	public ShortBitSet() {
-		this.flag = 0;
-	}
+    public ShortBitSet() {
+        this.flag = 0;
+    }
 
-	public ShortBitSet(int flag) {
-		this.flag = (short) flag;
-	}
+    public ShortBitSet(int flag) {
+        this.flag = (short) flag;
+    }
 
-	public ShortBitSet(ShortBitMask flag) {
-		this.flag = flag.getMask();
-	}
+    public ShortBitSet(ShortBitMask flag) {
+        this.flag = flag.getMask();
+    }
 
-	public ShortBitSet(ShortBitMask... flags) {
-		this.flag = 0;
-		for (ShortBitMask flag : flags) {
-			this.flag |= flag.getMask();
-		}
-	}
+    public ShortBitSet(ShortBitMask... flags) {
+        this.flag = 0;
+        for (ShortBitMask flag : flags) {
+            this.flag |= flag.getMask();
+        }
+    }
 
-	/**
-	 * Gets the current flag as a byte
-	 *
-	 * @return the current flag
-	 */
-	public short get() {
-		return this.flag;
-	}
+    /**
+     * Gets the current flag as a byte
+     *
+     * @return the current flag
+     */
+    public short get() {
+        return this.flag;
+    }
 
-	/**
-	 * Gets the current state of one or more bits using a mask<br> If multiple bits are contained in the mask, all bits have to match
-	 *
-	 * @param mask to use
-	 * @return True if all of the bits in the mask are set, False if not
-	 */
-	public boolean isEqual(ShortBitMask mask) {
-		return LogicUtil.getBit(this.flag, mask.getMask());
-	}
+    /**
+     * Gets the current state of one or more bits using a mask<br> If multiple bits are contained in the mask, all bits have to match
+     *
+     * @param mask to use
+     * @return True if all of the bits in the mask are set, False if not
+     */
+    public boolean isEqual(ShortBitMask mask) {
+        return LogicUtil.getBit(this.flag, mask.getMask());
+    }
 
-	/**
-	 * Gets the current state of one or more bits using a mask<br> If multiple bits are contained in the mask, one of these bits have to match
-	 *
-	 * @param mask containing the bit flags
-	 * @return True if one of the bits in the mask are set, False if not
-	 */
-	public boolean isAny(ShortBitMask mask) {
-		return (this.flag & mask.getMask()) != 0;
-	}
+    /**
+     * Gets the current state of one or more bits using a mask<br> If multiple bits are contained in the mask, one of these bits have to match
+     *
+     * @param mask containing the bit flags
+     * @return True if one of the bits in the mask are set, False if not
+     */
+    public boolean isAny(ShortBitMask mask) {
+        return (this.flag & mask.getMask()) != 0;
+    }
 
-	/**
-	 * Sets the current flag
-	 *
-	 * @param mask to set to
-	 */
-	public void set(ShortBitMask mask) {
-		this.flag = mask.getMask();
-	}
+    /**
+     * Sets the current flag
+     *
+     * @param mask to set to
+     */
+    public void set(ShortBitMask mask) {
+        this.flag = mask.getMask();
+    }
 
-	/**
-	 * Sets the current flag
-	 *
-	 * @param flag to set to
-	 */
-	public void set(short flag) {
-		this.flag = flag;
-	}
+    /**
+     * Sets the current flag
+     *
+     * @param flag to set to
+     */
+    public void set(short flag) {
+        this.flag = flag;
+    }
 
-	/**
-	 * Sets the current state of a bit using a mask
-	 *
-	 * @param mask to use
-	 * @param value to set the bit to
-	 */
-	public void set(ShortBitMask mask, boolean value) {
-		this.flag = LogicUtil.setBit(this.flag, mask.getMask(), value);
-	}
+    /**
+     * Sets the current state of a bit using a mask
+     *
+     * @param mask to use
+     * @param value to set the bit to
+     */
+    public void set(ShortBitMask mask, boolean value) {
+        this.flag = LogicUtil.setBit(this.flag, mask.getMask(), value);
+    }
 
     @Override
     public short getMask() {

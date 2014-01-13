@@ -26,83 +26,83 @@ package com.flowpowered.commons.bit;
 import com.flowpowered.commons.LogicUtil;
 
 public class ByteBitSet implements ByteBitMask {
-	private byte flag;
+    private byte flag;
 
-	public ByteBitSet() {
-		this.flag = 0;
-	}
+    public ByteBitSet() {
+        this.flag = 0;
+    }
 
-	public ByteBitSet(int flag) {
-		this.flag = (byte) flag;
-	}
+    public ByteBitSet(int flag) {
+        this.flag = (byte) flag;
+    }
 
-	public ByteBitSet(ByteBitMask flag) {
-		this.flag = flag.getMask();
-	}
+    public ByteBitSet(ByteBitMask flag) {
+        this.flag = flag.getMask();
+    }
 
-	public ByteBitSet(ByteBitMask... flags) {
-		this.flag = 0;
-		for (ByteBitMask flag : flags) {
-			this.flag |= flag.getMask();
-		}
-	}
+    public ByteBitSet(ByteBitMask... flags) {
+        this.flag = 0;
+        for (ByteBitMask flag : flags) {
+            this.flag |= flag.getMask();
+        }
+    }
 
-	/**
-	 * Gets the current flag as a byte
-	 *
-	 * @return the current flag
-	 */
-	public byte get() {
-		return this.flag;
-	}
+    /**
+     * Gets the current flag as a byte
+     *
+     * @return the current flag
+     */
+    public byte get() {
+        return this.flag;
+    }
 
-	/**
-	 * Gets the current state of one or more bits using a mask<br> If multiple bits are contained in the mask, all bits have to match
-	 *
-	 * @param mask to use
-	 * @return True if all of the bits in the mask are set, False if not
-	 */
-	public boolean isEqual(ByteBitMask mask) {
-		return LogicUtil.getBit(this.flag, mask.getMask());
-	}
+    /**
+     * Gets the current state of one or more bits using a mask<br> If multiple bits are contained in the mask, all bits have to match
+     *
+     * @param mask to use
+     * @return True if all of the bits in the mask are set, False if not
+     */
+    public boolean isEqual(ByteBitMask mask) {
+        return LogicUtil.getBit(this.flag, mask.getMask());
+    }
 
-	/**
-	 * Gets the current state of one or more bits using a mask<br> If multiple bits are contained in the mask, one of these bits have to match
-	 *
-	 * @param mask containing the bit flags
-	 * @return True if one of the bits in the mask are set, False if not
-	 */
-	public boolean isAny(ByteBitMask mask) {
-		return (this.flag & mask.getMask()) != 0;
-	}
+    /**
+     * Gets the current state of one or more bits using a mask<br> If multiple bits are contained in the mask, one of these bits have to match
+     *
+     * @param mask containing the bit flags
+     * @return True if one of the bits in the mask are set, False if not
+     */
+    public boolean isAny(ByteBitMask mask) {
+        return (this.flag & mask.getMask()) != 0;
+    }
 
-	/**
-	 * Sets the current flag
-	 *
-	 * @param mask to set to
-	 */
-	public void set(ByteBitMask mask) {
-		this.flag = mask.getMask();
-	}
+    /**
+     * Sets the current flag
+     *
+     * @param mask to set to
+     */
+    public void set(ByteBitMask mask) {
+        this.flag = mask.getMask();
+    }
 
-	/**
-	 * Sets the current flag
-	 *
-	 * @param flag to set to
-	 */
-	public void set(byte flag) {
-		this.flag = flag;
-	}
+    /**
+     * Sets the current flag
+     *
+     * @param flag to set to
+     */
+    public void set(byte flag) {
+        this.flag = flag;
+    }
 
-	/**
-	 * Sets the current state of a bit using a mask
-	 *
-	 * @param mask to use
-	 * @param value to set the bit to
-	 */
-	public void set(ByteBitMask mask, boolean value) {
-		this.flag = LogicUtil.setBit(this.flag, mask.getMask(), value);
-	}
+    /**
+     * Sets the current state of a bit using a mask
+     *
+     * @param mask to use
+     * @param value to set the bit to
+     */
+    public void set(ByteBitMask mask, boolean value) {
+        this.flag = LogicUtil.setBit(this.flag, mask.getMask(), value);
+    }
 
     @Override
     public byte getMask() {

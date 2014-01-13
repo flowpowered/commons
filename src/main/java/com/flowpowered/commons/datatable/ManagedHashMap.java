@@ -32,116 +32,116 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.flowpowered.commons.datatable.delta.DeltaMap;
 
 public class ManagedHashMap extends SerializableHashMap implements ManagedMap {
-	private static final long serialVersionUID = 1L;
-	private final DeltaMap delta;
+    private static final long serialVersionUID = 1L;
+    private final DeltaMap delta;
 
-	public ManagedHashMap() {
-		this.delta = new DeltaMap(DeltaMap.DeltaType.SET);
-	}
+    public ManagedHashMap() {
+        this.delta = new DeltaMap(DeltaMap.DeltaType.SET);
+    }
 
-	public ManagedHashMap(ManagedHashMap parent, String key) {
-		this.delta = new DeltaMap(parent.delta, DeltaMap.DeltaType.SET, key);
-	}
+    public ManagedHashMap(ManagedHashMap parent, String key) {
+        this.delta = new DeltaMap(parent.delta, DeltaMap.DeltaType.SET, key);
+    }
 
-	@Override
-	public Serializable putIfAbsent(String key, Serializable value) {
-		delta.putIfAbsent(key, value);
-		return super.putIfAbsent(key, value);
-	}
+    @Override
+    public Serializable putIfAbsent(String key, Serializable value) {
+        delta.putIfAbsent(key, value);
+        return super.putIfAbsent(key, value);
+    }
 
-	@Override
-	public Serializable put(String key, Serializable value) {
-		delta.putIfAbsent(key, value);
-		return super.put(key, value);
-	}
+    @Override
+    public Serializable put(String key, Serializable value) {
+        delta.putIfAbsent(key, value);
+        return super.put(key, value);
+    }
 
-	@Override
-	public Serializable remove(String key) {
-		delta.put(key, null);
-		return map.remove(key);
-	}
+    @Override
+    public Serializable remove(String key) {
+        delta.put(key, null);
+        return map.remove(key);
+    }
 
-	@Override
-	public void clear() {
-		delta.clear();
-		map.clear();
-	}
+    @Override
+    public void clear() {
+        delta.clear();
+        map.clear();
+    }
 
-	@Override
-	public void deserialize(byte[] data, boolean wipe) throws IOException {
+    @Override
+    public void deserialize(byte[] data, boolean wipe) throws IOException {
         this.deserialize(data, wipe, true);
-	}
+    }
 
     @Override
     public void deserialize(byte[] data, boolean wipe, boolean updateDelta) throws IOException {
         if (updateDelta) { 
             delta.deserialize(data, wipe);
         }
-		super.deserialize(data, wipe);
+        super.deserialize(data, wipe);
     }
 
-	/**
-	 * This will return if the map has been map has been modified since the last call to setDirty(false).
-	 *
-	 * @return the dirty state of the map
-	 */
-	@Override
-	public DeltaMap getDeltaMap() {
-		return delta;
-	}
+    /**
+     * This will return if the map has been map has been modified since the last call to setDirty(false).
+     *
+     * @return the dirty state of the map
+     */
+    @Override
+    public DeltaMap getDeltaMap() {
+        return delta;
+    }
 
-	@Override
-	public void resetDelta() {
-		delta.reset();
-	}
+    @Override
+    public void resetDelta() {
+        delta.reset();
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder toString = new StringBuilder("ManagedHashMap {");
-		for (Map.Entry<? extends String, ? extends Serializable> e : entrySet()) {
-			toString.append("(");
-			toString.append(e.getKey());
-			toString.append(", ");
-			toString.append(e.getValue());
-			toString.append("), ");
-		}
-		toString.delete(toString.length() - 2, toString.length());
-		toString.append("}");
-		return toString.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder toString = new StringBuilder("ManagedHashMap {");
+        for (Map.Entry<? extends String, ? extends Serializable> e : entrySet()) {
+            toString.append("(");
+            toString.append(e.getKey());
+            toString.append(", ");
+            toString.append(e.getValue());
+            toString.append("), ");
+        }
+        toString.delete(toString.length() - 2, toString.length());
+        toString.append("}");
+        return toString.toString();
+    }
 
-	@Override
-	public int hashCode() {
-		HashCodeBuilder builder = new HashCodeBuilder();
-		for (Map.Entry<? extends String, ? extends Serializable> e : entrySet()) {
-			builder.append(e.getKey());
-			builder.append(e.getValue());
-		}
-		return builder.toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        for (Map.Entry<? extends String, ? extends Serializable> e : entrySet()) {
+            builder.append(e.getKey());
+            builder.append(e.getValue());
+        }
+        return builder.toHashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof ManagedHashMap)) {
-			return false;
-		}
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ManagedHashMap)) {
+            return false;
+        }
 
-		ManagedHashMap other = (ManagedHashMap) obj;
-		if (isEmpty() && other.isEmpty()) {
-			return true;
-		}
+        ManagedHashMap other = (ManagedHashMap) obj;
+        if (isEmpty() && other.isEmpty()) {
+            return true;
+        }
 
-		for (Map.Entry<? extends String, ? extends Serializable> e : entrySet()) {
-			Serializable value = e.getValue();
-			Serializable otherValue = other.get(e.getKey());
-			if (value != null) {
-				if (!value.equals(otherValue)) {
-					return false;
-				}
-			} else if (otherValue != null) {
-				return false;
-			}
-		}
-		return true;
-	}
+        for (Map.Entry<? extends String, ? extends Serializable> e : entrySet()) {
+            Serializable value = e.getValue();
+            Serializable otherValue = other.get(e.getKey());
+            if (value != null) {
+                if (!value.equals(otherValue)) {
+                    return false;
+                }
+            } else if (otherValue != null) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -26,7 +26,7 @@ package com.flowpowered.commons.datatable.defaulted;
 import java.io.Serializable;
 
 public interface DefaultedKey<T extends Serializable> {
-	public T getDefaultValue();
+    public T getDefaultValue();
 
-	public String getKeyString();
+    public String getKeyString();
 }

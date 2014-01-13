@@ -31,108 +31,108 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class SimpleFuture<T> implements Future<T> {
 
-	private static Object THROWABLE = new Object();
-	private static Object CANCEL = new Object();
-	private static Object NULL = new Object();
+    private static Object THROWABLE = new Object();
+    private static Object CANCEL = new Object();
+    private static Object NULL = new Object();
 
-	private AtomicReference<T> resultRef = new AtomicReference<>(null);
-	private AtomicReference<Throwable> throwable = new AtomicReference<>(null);
+    private AtomicReference<T> resultRef = new AtomicReference<>(null);
+    private AtomicReference<Throwable> throwable = new AtomicReference<>(null);
 
-	@SuppressWarnings("unchecked")
-	public boolean setThrowable(Throwable t) {
-		if (!throwable.compareAndSet(null, t)) {
-			return false;
-		}
+    @SuppressWarnings("unchecked")
+    public boolean setThrowable(Throwable t) {
+        if (!throwable.compareAndSet(null, t)) {
+            return false;
+        }
 
-		if (!resultRef.compareAndSet(null, (T)THROWABLE)) {
-			return false;
-		}
+        if (!resultRef.compareAndSet(null, (T)THROWABLE)) {
+            return false;
+        }
 
-		synchronized (resultRef) {
-			resultRef.notifyAll();
-		}
+        synchronized (resultRef) {
+            resultRef.notifyAll();
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@SuppressWarnings("unchecked")
-	public boolean setResult(T result) {
-		if (result == null) {
-			result = (T)NULL;
-		}
-		
-		if (!resultRef.compareAndSet(null, result)) {
-			return false;
-		}
-		
-		synchronized (resultRef) {
-			resultRef.notifyAll();
-		}
-		
-		return true;
-	}
+    @SuppressWarnings("unchecked")
+    public boolean setResult(T result) {
+        if (result == null) {
+            result = (T)NULL;
+        }
+        
+        if (!resultRef.compareAndSet(null, result)) {
+            return false;
+        }
+        
+        synchronized (resultRef) {
+            resultRef.notifyAll();
+        }
+        
+        return true;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		return resultRef.compareAndSet(null, (T)CANCEL);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return resultRef.compareAndSet(null, (T)CANCEL);
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return resultRef.get() == CANCEL;
-	}
+    @Override
+    public boolean isCancelled() {
+        return resultRef.get() == CANCEL;
+    }
 
-	@Override
-	public boolean isDone() {
-		return resultRef.get() != null;
-	}
+    @Override
+    public boolean isDone() {
+        return resultRef.get() != null;
+    }
 
-	@Override
-	public T get() throws InterruptedException, ExecutionException {
-		try {
-			return get(0, TimeUnit.MILLISECONDS);
-		} catch (TimeoutException toe) {
-			throw new IllegalStateException("Attempting to get with an infinite timeout should not cause a timeout exception", toe);
-		}
-	}
+    @Override
+    public T get() throws InterruptedException, ExecutionException {
+        try {
+            return get(0, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException toe) {
+            throw new IllegalStateException("Attempting to get with an infinite timeout should not cause a timeout exception", toe);
+        }
+    }
 
-	@Override
-	public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		boolean noTimeout = timeout <= 0;
+    @Override
+    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        boolean noTimeout = timeout <= 0;
 
-		long timeoutInMS = unit.toMillis(timeout);
+        long timeoutInMS = unit.toMillis(timeout);
 
-		if (!noTimeout && timeoutInMS <= 0) {
-			timeoutInMS = 1;
-		}
-		long currentTime = System.currentTimeMillis();
-		long endTime = currentTime + timeoutInMS;
+        if (!noTimeout && timeoutInMS <= 0) {
+            timeoutInMS = 1;
+        }
+        long currentTime = System.currentTimeMillis();
+        long endTime = currentTime + timeoutInMS;
 
-		while (noTimeout || currentTime < endTime) {
-			synchronized (resultRef) {
-				T result = resultRef.get();
-				if (result != null) {
-					if (result == NULL || result == CANCEL) {
-						return null;
-					}
+        while (noTimeout || currentTime < endTime) {
+            synchronized (resultRef) {
+                T result = resultRef.get();
+                if (result != null) {
+                    if (result == NULL || result == CANCEL) {
+                        return null;
+                    }
 
-					if (result == THROWABLE) {
-						Throwable t = throwable.get();
-						throw new ExecutionException("Exception occured when trying to retrieve the result of this future", t);
-					}
+                    if (result == THROWABLE) {
+                        Throwable t = throwable.get();
+                        throw new ExecutionException("Exception occured when trying to retrieve the result of this future", t);
+                    }
 
-					return result;
-				}
+                    return result;
+                }
 
-				if (noTimeout) {
-					resultRef.wait();
-				} else {
-					resultRef.wait(endTime - currentTime);
-				}
-			}
-			currentTime = System.currentTimeMillis();
-		}
-		throw new TimeoutException("Wait duration of " + (currentTime - (endTime - timeoutInMS)) + "ms exceeds timeout of " + timeout + unit.toString());
-	}
+                if (noTimeout) {
+                    resultRef.wait();
+                } else {
+                    resultRef.wait(endTime - currentTime);
+                }
+            }
+            currentTime = System.currentTimeMillis();
+        }
+        throw new TimeoutException("Wait duration of " + (currentTime - (endTime - timeoutInMS)) + "ms exceeds timeout of " + timeout + unit.toString());
+    }
 }

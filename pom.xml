@@ -114,10 +114,20 @@
     <!-- Project dependencies -->
     <dependencies>
         <dependency>
+            <groupId>com.flowpowered</groupId>
+            <artifactId>flow-math</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
             <version>2.11</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -129,16 +139,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.5</version>
-        </dependency>
-		<dependency>
-			<groupId>org.spout</groupId>
-			<artifactId>spout-math</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
-        <dependency>
-        	<groupId>net.sf.trove4j</groupId>
-        	<artifactId>trove4j</artifactId>
-        	<version>3.0.3</version>
         </dependency>
         <!-- Testing only -->
         <dependency>

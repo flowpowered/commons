@@ -26,27 +26,27 @@ package com.flowpowered.commons.datatable.defaulted;
 import java.io.Serializable;
 
 public class DefaultedKeyFactory<T extends Serializable> implements DefaultedKey<T> {
-	private final Class<T> defaultValue;
-	private final String key;
+    private final Class<T> defaultValue;
+    private final String key;
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	public DefaultedKeyFactory(String key, Class<?> defaultValue) {
-		this.key = key;
-		this.defaultValue = (Class) defaultValue;
-	}
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public DefaultedKeyFactory(String key, Class<?> defaultValue) {
+        this.key = key;
+        this.defaultValue = (Class) defaultValue;
+    }
 
-	@Override
-	public T getDefaultValue() {
-		try {
-			return defaultValue.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    @Override
+    public T getDefaultValue() {
+        try {
+            return defaultValue.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-	@Override
-	public String getKeyString() {
-		return key;
-	}
+    @Override
+    public String getKeyString() {
+        return key;
+    }
 }

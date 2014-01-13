@@ -27,18 +27,18 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 
 public class DefaultedKeyArray<T extends Serializable> extends DefaultedKeyImpl<T[]> {
-	private final int length;
-	private final Class<T> clazz;
+    private final int length;
+    private final Class<T> clazz;
 
-	public DefaultedKeyArray(String key, int length, Class<T> clazz) {
-		super(key, null);
-		this.length = length;
-		this.clazz = clazz;
-	}
+    public DefaultedKeyArray(String key, int length, Class<T> clazz) {
+        super(key, null);
+        this.length = length;
+        this.clazz = clazz;
+    }
 
-	@SuppressWarnings ("unchecked")
-	@Override
-	public T[] getDefaultValue() {
-		return (T[]) Array.newInstance(clazz, length);
-	}
+    @SuppressWarnings ("unchecked")
+    @Override
+    public T[] getDefaultValue() {
+        return (T[]) Array.newInstance(clazz, length);
+    }
 }

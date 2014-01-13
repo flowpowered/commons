@@ -26,8 +26,8 @@ package com.flowpowered.commons;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.spout.math.matrix.Matrix4f;
-import org.spout.math.vector.Vector3f;
+import com.flowpowered.math.matrix.Matrix4f;
+import com.flowpowered.math.vector.Vector3f;
 
 public class ViewFrustumTest {
     @Test

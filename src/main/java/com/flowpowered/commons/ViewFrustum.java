@@ -23,8 +23,8 @@
  */
 package com.flowpowered.commons;
 
-import org.spout.math.matrix.Matrix4f;
-import org.spout.math.vector.Vector3f;
+import com.flowpowered.math.matrix.Matrix4f;
+import com.flowpowered.math.vector.Vector3f;
 
 /**
  * A view frustum defined by the camera view and projection. Used to check for intersection with object to determine whether or not they're visible.
