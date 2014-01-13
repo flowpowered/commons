@@ -187,7 +187,7 @@ public class AtomicShortIntArrayTest {
 
         checkWidth(expWidth);
 
-        System.out.println("");
+        //System.out.println("");
     }
 
     Exception parallelException = null;

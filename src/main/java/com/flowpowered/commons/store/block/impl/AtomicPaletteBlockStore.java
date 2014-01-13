@@ -93,6 +93,7 @@ public class AtomicPaletteBlockStore implements AtomicBlockStore {
             } else {
                 store.uncompressedSet(initial);
             }
+            dirtyBlocks.set(blocks.length);
         }
     }
 
