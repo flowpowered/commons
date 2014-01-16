@@ -29,7 +29,7 @@ package com.flowpowered.commons.ticking;
 public abstract class TickingElement {
     private final String name;
     private final int tps;
-    private TPSLimitedThread thread;
+    private volatile TPSLimitedThread thread;
 
     public TickingElement(String name, int tps) {
         this.name = name;
@@ -37,14 +37,20 @@ public abstract class TickingElement {
     }
 
     public final void start() {
-        thread = new TPSLimitedThread(name, this, tps);
-        thread.start();
+        synchronized (this) {
+            if (thread == null) {
+                thread = new TPSLimitedThread(name, this, tps);
+                thread.start();
+            }
+        }
     }
 
     public final void stop() {
-        if (thread != null) {
-            thread.terminate();
-            thread = null;
+        synchronized (this) {
+            if (thread != null) {
+                thread.terminate();
+                thread = null;
+            }
         }
     }
 
