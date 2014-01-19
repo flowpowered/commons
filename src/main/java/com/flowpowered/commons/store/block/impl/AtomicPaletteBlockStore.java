@@ -250,7 +250,7 @@ public class AtomicPaletteBlockStore implements AtomicBlockStore {
     @Override
     public short[] getBlockIdArray(short[] array) {
         if (array.length != length) {
-            array = new short[length];
+            throw new IllegalArgumentException("Invalid array size! Expected: " + length + " Got: " + array.length);
         }
         for (int i = 0; i < length; i++) {
             array[i] = (short) (store.get(i) >> 16);
@@ -292,12 +292,7 @@ public class AtomicPaletteBlockStore implements AtomicBlockStore {
 
     @Override
     public void compress() {
-        compress(new TIntHashSet());
-    }
-
-    @Override
-    public void compress(TIntHashSet inUseSet) {
-        store.compress(inUseSet);
+        store.compress();
     }
 
     @Override

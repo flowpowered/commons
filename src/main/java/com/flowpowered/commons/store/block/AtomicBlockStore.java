@@ -254,13 +254,6 @@ public interface AtomicBlockStore {
     void compress();
 
     /**
-     * Compresses the store.<br>
-     *
-     * @param inUseSet to use to store used ids
-     */
-    void compress(TIntHashSet inUseSet);
-
-    /**
      * Gets if the dirty array has overflowed since the last reset.<br> <br>
      *
      * @return true if there was an overflow

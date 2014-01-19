@@ -236,22 +236,13 @@ public class AtomicShortIntArray {
      * Attempts to compress the array
      */
     public void compress() {
-        compress(new TIntHashSet());
-    }
-
-    /**
-     * Attempts to compress the array
-     *
-     * @param inUseSet to use to store used ids
-     */
-    public void compress(TIntHashSet inUseSet) {
         resizeLock.lock();
         try {
             AtomicShortIntBackingArray s = store.get();
             if (s instanceof AtomicShortIntUniformBackingArray) {
                 return;
             }
-            int unique = s.getUnique(inUseSet);
+            int unique = s.getUnique();
             if (AtomicShortIntPaletteBackingArray.roundUpWidth(unique - 1) >= s.width()) {
                 return;
             }
@@ -273,13 +264,10 @@ public class AtomicShortIntArray {
      */
     public int getUnique() {
         TIntHashSet inUse = new TIntHashSet();
-        int unique = 0;
         for (int i = 0; i < length; i++) {
-            if (inUse.add(get(i))) {
-                unique++;
-            }
+            inUse.add(get(i));
         }
-        return unique;
+        return inUse.size();
     }
 
     /**
@@ -298,13 +286,8 @@ public class AtomicShortIntArray {
 
     private static int getUnique(int[] initial) {
         TIntHashSet inUse = new TIntHashSet();
-        int unique = 0;
-        for (int anInitial : initial) {
-            if (inUse.add(anInitial)) {
-                unique++;
-            }
-        }
-        return unique;
+        inUse.addAll(initial);
+        return inUse.size();
     }
 
     /**

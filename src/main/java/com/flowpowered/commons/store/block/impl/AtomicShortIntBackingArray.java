@@ -102,23 +102,11 @@ public abstract class AtomicShortIntBackingArray {
      * Gets the number of unique entries in the array
      */
     public int getUnique() {
-        return getUnique(new TIntHashSet());
-    }
-
-    /**
-     * Gets the number of unique entries in the array
-     *
-     * @param inUseSet set to use to store used ids
-     */
-    public int getUnique(TIntHashSet inUseSet) {
-        inUseSet.clear();
-        int unique = 0;
+        TIntHashSet inUseSet = new TIntHashSet();
         for (int i = 0; i < length; i++) {
-            if (inUseSet.add(get(i))) {
-                unique++;
-            }
+            inUseSet.add(get(i));
         }
-        return unique;
+        return inUseSet.size();
     }
 
     /**
