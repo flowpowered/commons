@@ -29,7 +29,7 @@ package com.flowpowered.commons.ticking;
 public class TPSLimitedThread extends Thread {
     private final TickingElement element;
     private final Timer timer;
-    private volatile boolean running = true;
+    private volatile boolean running = false;
 
     public TPSLimitedThread(String name, TickingElement element, int tps) {
         super(name);
@@ -39,6 +39,7 @@ public class TPSLimitedThread extends Thread {
 
     @Override
     public void run() {
+        running = true;
         element.onStart();
         timer.start();
         long lastTime = getTime() - (long) (1f / timer.getTps() * 1000000000), currentTime;
