@@ -62,6 +62,8 @@ public class JLineConsole {
             throw new ExceptionInInitializerError(e);
         }
 
+        setupConsole(reader);
+
         @SuppressWarnings ("unchecked")
         final Collection<Completer> completer = reader.getCompleters();
         for (Completer c : new ArrayList<>(completer)) {
@@ -75,6 +77,13 @@ public class JLineConsole {
         commandThread.start();
     }
 
+    public Logger getLogger() {
+        return logger;
+    }
+
+    protected void setupConsole(ConsoleReader reader) {
+    }
+
     private class ConsoleCommandThread extends Thread {
         public ConsoleCommandThread() {
             super("ConsoleCommandThread");
@@ -86,6 +95,7 @@ public class JLineConsole {
             String command;
             while (!closed.get()) {
                 try {
+                    reader.print(String.valueOf(ConsoleReader.RESET_LINE));
                     command = reader.readLine(">", null);
 
                     if (command == null || command.trim().length() == 0) {
