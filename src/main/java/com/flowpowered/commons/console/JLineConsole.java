@@ -23,7 +23,10 @@
  */
 package com.flowpowered.commons.console;
 
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +39,8 @@ import jline.console.completer.NullCompleter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.flowpowered.commons.InterruptableInputStream;
 
 
 /**
@@ -57,7 +62,7 @@ public class JLineConsole {
         this.logger = logger;
 
         try {
-            reader = new ConsoleReader();
+            reader = new ConsoleReader(new InterruptableInputStream(new FileInputStream(FileDescriptor.in)), System.out);
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -103,6 +108,8 @@ public class JLineConsole {
                     }
 
                     callback.handleCommand(command);
+                } catch (InterruptedIOException e) {
+                    // ignore
                 } catch (Exception ex) {
                     // TODO: Maybe it should be error instead of warn?
                     logger.warn("Exception in console command thread:", ex);
@@ -117,9 +124,12 @@ public class JLineConsole {
         }
     }
 
-    private void closeImpl() {
+    protected void closeImpl() {
         try {
+            commandThread.interrupt();
+            reader.setCursorPosition(0);
             reader.killLine();
+            reader.print(String.valueOf(ConsoleReader.RESET_LINE));
             reader.flush();
         } catch (IOException ex) {
             // TODO: Maybe it should be warn instead of error?
