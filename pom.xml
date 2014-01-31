@@ -226,6 +226,9 @@
                                 <include>src/main/java/**</include>
                                 <include>src/test/java/**</include>
                             </includes>
+                            <excludes>
+                                <exclude>src/main/java/com/flowpowered/commons/map/impl/TSyncIntObjectHashMap.java</exclude>
+                            </excludes>
                         </configuration>
                         <phase>clean</phase>
                         <goals>
