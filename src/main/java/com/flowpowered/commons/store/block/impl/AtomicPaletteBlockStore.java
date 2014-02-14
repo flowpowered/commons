@@ -26,9 +26,6 @@ package com.flowpowered.commons.store.block.impl;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.flowpowered.commons.store.block.AtomicBlockStore;
-
-import gnu.trove.set.hash.TIntHashSet;
-
 import com.flowpowered.math.vector.Vector3i;
 
 public class AtomicPaletteBlockStore implements AtomicBlockStore {
@@ -49,14 +46,6 @@ public class AtomicPaletteBlockStore implements AtomicBlockStore {
     private final AtomicInteger minZ = new AtomicInteger();
     private final AtomicInteger dirtyBlocks = new AtomicInteger(0);
 
-    public AtomicPaletteBlockStore(int shift, boolean storeState) {
-        this(shift, storeState, 10);
-    }
-
-    public AtomicPaletteBlockStore(int shift, boolean storeState, boolean compress, short[] initial) {
-        this(shift, storeState, compress, 10, initial);
-    }
-
     public AtomicPaletteBlockStore(int shift, boolean storeState, int dirtySize) {
         int side = 1 << shift;
         this.shift = shift;
@@ -76,25 +65,20 @@ public class AtomicPaletteBlockStore implements AtomicBlockStore {
         }
     }
 
-    public AtomicPaletteBlockStore(int shift, boolean storeState, boolean compress, int dirtySize, short[] initial) {
-        this(shift, storeState, compress, dirtySize, initial, null);
-    }
-
-    public AtomicPaletteBlockStore(int shift, boolean storeState, boolean compress, int dirtySize, short[] blocks, short[] data) {
+    public AtomicPaletteBlockStore(int shift, boolean storeState, boolean compress, int dirtySize, int[] initial) {
         this(shift, storeState, dirtySize);
-        if (blocks != null) {
-            int[] initial = new int[Math.min(blocks.length, this.length)];
-            for (int i = 0; i < blocks.length; i++) {
-                short d = data != null ? data[i] : 0;
-                initial[i] = blocks[i] << 16 | d & 0xFFFF;
-            }
+        if (initial != null) {
             if (compress) {
                 store.set(initial);
             } else {
                 store.uncompressedSet(initial);
             }
-            dirtyBlocks.set(blocks.length);
+            dirtyBlocks.set(initial.length);
         }
+    }
+
+    public AtomicPaletteBlockStore(int shift, boolean storeState, boolean compress, int dirtySize, short[] blocks, short[] data) {
+        this(shift, storeState, compress, dirtySize, toIntArray(blocks, data));
     }
 
     public AtomicPaletteBlockStore(int shift, boolean storeState, boolean compress, int dirtySize, int[] palette, int blockArrayWidth, int[] variableWidthBlockArray) {
@@ -104,6 +88,16 @@ public class AtomicPaletteBlockStore implements AtomicBlockStore {
         }
         store.set(palette, blockArrayWidth, variableWidthBlockArray);
     }
+
+	private static int[] toIntArray(short[] blocks, short[] data) {
+		if (blocks == null) return null;
+		int[] initial = new int[blocks.length];
+		for (int i = 0; i < blocks.length; i++) {
+			short d = data != null ? data[i] : 0;
+			initial[i] = blocks[i] << 16 | d & 0xFFFF;
+		}
+		return initial;
+	}
 
     @Override
     public int getFullData(int x, int y, int z) {
