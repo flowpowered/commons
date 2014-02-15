@@ -23,6 +23,7 @@
  */
 package com.flowpowered.commons;
 
+import com.flowpowered.math.matrix.Matrix3f;
 import com.flowpowered.math.matrix.Matrix4f;
 import com.flowpowered.math.vector.Vector3f;
 
@@ -31,6 +32,8 @@ import com.flowpowered.math.vector.Vector3f;
  */
 public class ViewFrustum {
     private final float[][] frustum = new float[6][4];
+    private Vector3f[] vertices;
+    private Vector3f position;
 
     /**
      * Updates the frustum to match the view and projection matrix.
@@ -71,6 +74,78 @@ public class ViewFrustum {
         frustum[5][1] = clip[7] + clip[6];
         frustum[5][2] = clip[11] + clip[10];
         frustum[5][3] = clip[15] + clip[14];
+        // Invalidate the caches
+        vertices = null;
+        position = null;
+    }
+
+    public Vector3f[] getVertices() {
+        if (vertices == null) {
+            // Recalculate the points if the cache is invalid
+            computePoints();
+        }
+        return vertices;
+    }
+
+    public Vector3f getPosition() {
+        if (position == null) {
+            // Recalculate the point if the cache is invalid
+            computePoints();
+        }
+        return position;
+    }
+
+    private void computePoints() {
+        vertices = new Vector3f[8];
+        // RIGHT - TOP - NEAR
+        vertices[0] = getIntersection(0, 3, 5);
+        // RIGHT - TOP - FAR
+        vertices[1] = getIntersection(0, 3, 4);
+        // RIGHT - BOTTOM - NEAR
+        vertices[2] = getIntersection(0, 2, 5);
+        // RIGHT - BOTTOM - FAR
+        vertices[3] = getIntersection(0, 2, 4);
+        // LEFT - TOP - NEAR
+        vertices[4] = getIntersection(1, 3, 5);
+        // LEFT - TOP - FAR
+        vertices[5] = getIntersection(1, 3, 4);
+        // LEFT - BOTTOM - NEAR
+        vertices[6] = getIntersection(1, 2, 5);
+        // LEFT - BOTTOM - FAR
+        vertices[7] = getIntersection(1, 2, 4);
+        position = vertices[0].add(vertices[2]).add(vertices[4]).add(vertices[6]).div(4);
+    }
+
+    private Vector3f getIntersection(int p1, int p2, int p3) {
+         /*
+         Intersection of 3 planes
+
+         p1: ax + by + cz + d = 0
+         p2: ex + fy + gz + h = 0
+         p3: ix + jy + kz + l = 0
+
+         |a b c||x|   |-d|
+         |e f g||y| = |-h|
+         |i j k||z|   |-l|
+            A *  r  =   b
+
+         r = (A^-1) * b
+
+         r is our point of intersection
+        */
+        final Matrix3f a = new Matrix3f(
+                frustum[p1][0], frustum[p1][1], frustum[p1][2],
+                frustum[p2][0], frustum[p2][1], frustum[p2][2],
+                frustum[p3][0], frustum[p3][1], frustum[p3][2]
+        );
+        final Vector3f b = new Vector3f(
+                -frustum[p1][3], -frustum[p2][3], -frustum[p3][3]
+        );
+        final Matrix3f aInv = a.invert();
+        if (aInv == null) {
+            return null;
+        }
+        return aInv.transform(b);
     }
 
     /**
