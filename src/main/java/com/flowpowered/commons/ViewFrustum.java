@@ -79,14 +79,40 @@ public class ViewFrustum {
         position = null;
     }
 
+    /**
+     * Returns a new array containing the vertices of the frustum. They are in the following order, given by the intersection of the planes:
+     * <p/>
+     * RIGHT - TOP - NEAR
+     * <p/>
+     * RIGHT - TOP - FAR
+     * <p/>
+     * RIGHT - BOTTOM - NEAR
+     * <p/>
+     * RIGHT - BOTTOM - FAR
+     * <p/>
+     * LEFT - TOP - NEAR
+     * <p/>
+     * LEFT - TOP - FAR
+     * <p/>
+     * LEFT - BOTTOM - NEAR
+     * <p/>
+     * LEFT - BOTTOM - FAR
+     *
+     * @return An array containing the frustum vertices
+     */
     public Vector3f[] getVertices() {
         if (vertices == null) {
             // Recalculate the points if the cache is invalid
             computePoints();
         }
-        return vertices;
+        return vertices.clone();
     }
 
+    /**
+     * Returns the position of the frustum.
+     *
+     * @return The frustum position
+     */
     public Vector3f getPosition() {
         if (position == null) {
             // Recalculate the point if the cache is invalid
