@@ -237,6 +237,15 @@ public class AtomicPaletteBlockStore implements AtomicBlockStore {
     }
 
     @Override
+    public int[] getFullArray() {
+		int[] array = new int[length];
+		for (int i = 0; i < length; i++) {
+			array[i] = store.get(i);
+		}
+		return array;
+    }
+
+    @Override
     public short[] getBlockIdArray() {
         return getBlockIdArray(new short[length]);
     }

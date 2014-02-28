@@ -199,6 +199,13 @@ public interface AtomicBlockStore {
     boolean needsCompression();
 
     /**
+     * Gets an {@code int[]} of both the block ids and data.
+     *
+     * @return ids and data
+     */
+    int[] getFullArray();
+
+    /**
      * Gets a short array containing the block ids in the store.<br> <br> If the store is updated while this snapshot is being taken, data tearing could occur.
      *
      * @return the array
