@@ -58,6 +58,10 @@ public abstract class TickingElement {
         return thread != null && thread.isRunning();
     }
 
+    public TPSLimitedThread getThread() {
+        return thread;
+    }
+
     public abstract void onStart();
 
     public abstract void onTick(long dt);
