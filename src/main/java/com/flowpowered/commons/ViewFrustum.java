@@ -26,6 +26,7 @@ package com.flowpowered.commons;
 import com.flowpowered.math.matrix.Matrix3f;
 import com.flowpowered.math.matrix.Matrix4f;
 import com.flowpowered.math.vector.Vector3f;
+import com.flowpowered.math.vector.Vector4f;
 
 /**
  * A view frustum defined by the camera view and projection. Used to check for intersection with object to determine whether or not they're visible.
@@ -34,6 +35,7 @@ public class ViewFrustum {
     private final float[][] frustum = new float[6][4];
     private Vector3f[] vertices;
     private Vector3f position;
+    private float nearPlane = -1, farPlane = -1;
 
     /**
      * Updates the frustum to match the view and projection matrix.
@@ -74,9 +76,14 @@ public class ViewFrustum {
         frustum[5][1] = clip[7] + clip[6];
         frustum[5][2] = clip[11] + clip[10];
         frustum[5][3] = clip[15] + clip[14];
+        // Compute the position
+        // http://www.opengl.org/discussion_boards/showthread.php/178484-Extracting-camera-position-from-a-ModelView-Matrix
+        final Vector4f nPos = view.invert().getColumn(3);
+        position = nPos.div(nPos.getW()).toVector3();
         // Invalidate the caches
         vertices = null;
-        position = null;
+        farPlane = -1;
+        nearPlane = -1;
     }
 
     /**
@@ -103,25 +110,12 @@ public class ViewFrustum {
     public Vector3f[] getVertices() {
         if (vertices == null) {
             // Recalculate the points if the cache is invalid
-            computePoints();
+            computeVertices();
         }
         return vertices.clone();
     }
 
-    /**
-     * Returns the position of the frustum.
-     *
-     * @return The frustum position
-     */
-    public Vector3f getPosition() {
-        if (position == null) {
-            // Recalculate the point if the cache is invalid
-            computePoints();
-        }
-        return position;
-    }
-
-    private void computePoints() {
+    private void computeVertices() {
         vertices = new Vector3f[8];
         // RIGHT - TOP - NEAR
         vertices[0] = getIntersection(0, 3, 5);
@@ -139,7 +133,6 @@ public class ViewFrustum {
         vertices[6] = getIntersection(1, 2, 5);
         // LEFT - BOTTOM - FAR
         vertices[7] = getIntersection(1, 2, 4);
-        position = vertices[0].add(vertices[2]).add(vertices[4]).add(vertices[6]).div(4);
     }
 
     private Vector3f getIntersection(int p1, int p2, int p3) {
@@ -172,6 +165,43 @@ public class ViewFrustum {
             return null;
         }
         return aInv.transform(b);
+    }
+
+    /**
+     * Returns the position of the frustum.
+     *
+     * @return The frustum position
+     */
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    /**
+     * Returns the near plane distance of the frustum.
+     *
+     * @return The near plane
+     */
+    public float getNearPlane() {
+        if (nearPlane == -1) {
+            // Recalculate the distance if the cache is invalid
+            final Vector3f nearPos = vertices[0].add(vertices[2]).add(vertices[4]).add(vertices[6]).div(4);
+            nearPlane = nearPos.sub(position).length();
+        }
+        return nearPlane;
+    }
+
+    /**
+     * Returns the far plane distance of the frustum.
+     *
+     * @return The far plane
+     */
+    public float getFarPlane() {
+        if (farPlane == -1) {
+            // Recalculate the distance if the cache is invalid
+            final Vector3f farPos = vertices[1].add(vertices[3]).add(vertices[5]).add(vertices[7]).div(4);
+            farPlane = farPos.sub(position).length();
+        }
+        return farPlane;
     }
 
     /**
