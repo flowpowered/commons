@@ -37,6 +37,12 @@ public class TPSLimitedThread extends Thread {
         timer = new Timer(tps);
     }
 
+    public TPSLimitedThread(ThreadGroup group, String name, TickingElement element, int tps) {
+        super(group, name);
+        this.element = element;
+        timer = new Timer(tps);
+    }
+
     @Override
     public void run() {
         running = true;
