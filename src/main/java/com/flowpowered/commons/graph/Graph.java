@@ -74,6 +74,18 @@ public class Graph<C> {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.METHOD})
+    public static @interface Input {
+        String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD})
+    public static @interface Output {
+        String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD})
     public static @interface InputLink {
         String value();
     }
@@ -81,6 +93,18 @@ public class Graph<C> {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.METHOD})
     public static @interface OutputLink {
+        String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD})
+    public static @interface InputConnect {
+        String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD})
+    public static @interface OutputConnect {
         String value();
     }
 
