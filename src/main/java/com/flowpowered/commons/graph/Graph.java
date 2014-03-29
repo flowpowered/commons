@@ -23,38 +23,70 @@
  */
 package com.flowpowered.commons.graph;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Graph {
+public class Graph<C> {
+    private final Map<String, Node<C>> nodes = new HashMap<>();
 
-    private final Map<String, Node> nodes = new HashMap<>();
+    public void addNode(Node<C> node) {
+        nodes.put(node.getName(), node);
+    }
 
-    public void addNode(Node node) { nodes.put(node.getName(), node); }
+    public Node<C> getNode(String name) {
+        return nodes.get(name);
+    }
 
-    public Node getNode(String name) { return nodes.get(name); }
+    public boolean hasNode(String name) {
+        return nodes.containsKey(name);
+    }
 
-    public boolean hasNode(String name) { return nodes.containsKey(name); }
-
-    public boolean hasNode(Node node) { return nodes.containsKey(node); }
+    public boolean hasNode(Node<C> node) {
+        return hasNode(node.getName());
+    }
 
     public void removeNode(String name) {
-        if(hasNode(name)) {
-            nodes.remove(name);
-        }
-    }
-    public void removeNode(Node node) {
-        if(hasNode(node)) {
-            nodes.remove(node.getName());
-        }
+        nodes.remove(name);
     }
 
-    public void  link(Node parent, Object output, Node child, Object input) { }
+    public void removeNode(Node<C> node) {
+        removeNode(node.getName());
+    }
 
-    public void build() { }
+    public void link(Node parent, C output, Node child, C input) {
+    }
 
-    public void execute() { }
+    public void build() {
+    }
 
-    public void  set(Node nodeName, String name, Object value) { }
-    public void  setAll(String name, Object value) { }
+    public void execute() {
+    }
+
+    public <T> void set(Node nodeName, String name, T value) {
+    }
+
+    public <T> void setAll(String name, T value) {
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD})
+    public static @interface InputLink {
+        String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD})
+    public static @interface OutputLink {
+        String value();
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD})
+    public static @interface Setting {
+        String value();
+    }
 }

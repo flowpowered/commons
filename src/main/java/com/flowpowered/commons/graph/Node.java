@@ -23,47 +23,45 @@
  */
 package com.flowpowered.commons.graph;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.util.List;
+public abstract class Node<C> {
+    private final String name;
+    private final Map<C, Node<C>> parents = new HashMap<>();
+    private final Map<C, Node<C>> children = new HashMap<>();
 
-public class Node {
-
-    final String name;
-
-    public Node(String name) { this.name = name; }
-
-    public String getName() { return name; }
-
-    public  Node getParent(Object channel) { return null; }
-    public List<Node> getParents() { return null; }
-
-    public Node getChild(Object channel) { return null; }
-    public List<Node> getChildren() { return null; }
-
-    public void execute() { }
-
-    public void set(String name, Object value) { }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.METHOD})
-    public static @interface InputLink {
-        String value();
+    public Node(String name) {
+        this.name = name;
     }
 
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.METHOD})
-    public static @interface OutputLink {
-        String value();
+    public String getName() {
+        return name;
     }
 
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.METHOD})
-    public static @interface Setting {
+    public Node<C> getParent(C channel) {
+        return parents.get(channel);
     }
 
+    public Collection<Node<C>> getParents() {
+        return parents.values();
+    }
 
+    public Node<C> getChild(C channel) {
+        return children.get(channel);
+    }
+
+    public Collection<Node<C>> getChildren() {
+        return children.values();
+    }
+
+    public void link(Node<C> parent, C channel) {
+
+    }
+
+    public <T> void set(String name, T value) {
+    }
+
+    public abstract void execute();
 }
