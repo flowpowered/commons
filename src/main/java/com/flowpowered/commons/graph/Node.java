@@ -34,10 +34,13 @@ import com.flowpowered.commons.graph.Graph.InputLink;
 import com.flowpowered.commons.graph.Graph.Output;
 import com.flowpowered.commons.graph.Graph.OutputConnect;
 import com.flowpowered.commons.graph.Graph.OutputLink;
+import com.flowpowered.commons.graph.Graph.Setting;
 
 public abstract class Node<C> {
     private final String name;
-    private final Class<C> channelClass;
+    // Key is output, value is input
+    private final Map<String, String> inputsToOutputs = new HashMap<>();
+    // Keys are input/output name
     private final Map<String, Node<C>> parents = new HashMap<>();
     private final Map<String, Node<C>> children = new HashMap<>();
     private final Map<String, Method> inputs = new HashMap<>();
@@ -46,12 +49,16 @@ public abstract class Node<C> {
     private final Map<String, Method> inputConnects = new HashMap<>();
     private final Map<String, Method> outputLinks = new HashMap<>();
     private final Map<String, Method> outputConnects = new HashMap<>();
+    // Keys are setting name
+    private final Map<String, Method> settings = new HashMap<>();
+    private final Map<String, Class<?>> settingTypes = new HashMap<>();
 
     public Node(Class<C> channelClass, String name) {
-        this.channelClass = channelClass;
         this.name = name;
-        findInputsAndOutputs();
-        findEventMethods();
+        final Method[] methods = getClass().getMethods();
+        findInputsAndOutputs(methods, channelClass);
+        findEventMethods(methods, channelClass);
+        findSettingMethods(methods);
     }
 
     public String getName() {
@@ -79,11 +86,32 @@ public abstract class Node<C> {
         setInput(input, channel);
         parents.put(input, parent);
         parent.children.put(output, this);
+        inputsToOutputs.put(input, output);
         callEvent(outputLinks.get(output), this, channel);
         callEvent(inputLinks.get(input), parent, channel);
     }
 
-    public <T> void set(String name, T value) {
+    public void delink(String input) {
+        setInput(input, null);
+        final String output = inputsToOutputs.remove(input);
+        parents.remove(input).children.remove(output);
+        callEvent(outputLinks.get(output), null, null);
+        callEvent(inputLinks.get(input), null, null);
+    }
+
+    public void set(String name, Object value) {
+        final Class<?> type = settingTypes.get(name);
+        if (type == null) {
+            throw new IllegalArgumentException("No setting named \"" + name + "\"");
+        }
+        if (!type.isAssignableFrom(value.getClass())) {
+            throw new IllegalArgumentException("Value is not of type: " + type.getCanonicalName());
+        }
+        try {
+            settings.get(name).invoke(this, value);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to set value", ex);
+        }
     }
 
     public abstract void execute();
@@ -93,7 +121,7 @@ public abstract class Node<C> {
             try {
                 event.invoke(this, node, channel);
             } catch (Exception ex) {
-                throw new RuntimeException("Failed to call node event", ex);
+                throw new IllegalStateException("Failed to call node event", ex);
             }
         }
     }
@@ -106,7 +134,7 @@ public abstract class Node<C> {
         try {
             inputMethod.invoke(this, input);
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to set node input", ex);
+            throw new IllegalStateException("Failed to set node input", ex);
         }
     }
 
@@ -119,53 +147,53 @@ public abstract class Node<C> {
         try {
             return (C) outputMethod.invoke(this);
         } catch (Exception ex) {
-            throw new RuntimeException("Failed to get node output", ex);
+            throw new IllegalStateException("Failed to get node output", ex);
         }
     }
 
-    private void findInputsAndOutputs() {
-        for (Method method : getClass().getMethods()) {
+    private void findInputsAndOutputs(Method[] methods, Class<C> channelClass) {
+        for (Method method : methods) {
             method.setAccessible(true);
             final Input inputAnnotation = method.getAnnotation(Input.class);
             if (inputAnnotation != null) {
-                validateInputMethod(method);
+                validateInputMethod(method, channelClass);
                 inputs.put(inputAnnotation.value(), method);
             }
             final Output outputAnnotation = method.getAnnotation(Output.class);
             if (outputAnnotation != null) {
-                validateOutputMethod(method);
+                validateOutputMethod(method, channelClass);
                 outputs.put(outputAnnotation.value(), method);
             }
         }
     }
 
-    private void validateInputMethod(Method method) {
+    private void validateInputMethod(Method method, Class<C> channelClass) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 1 || !channelClass.isAssignableFrom(parameterTypes[0])) {
             throw new IllegalStateException("Input method must have one argument of type " + channelClass.getCanonicalName());
         }
     }
 
-    private void validateOutputMethod(Method method) {
+    private void validateOutputMethod(Method method, Class<C> channelClass) {
         if (method.getParameterTypes().length != 0 || !channelClass.isAssignableFrom(method.getReturnType())) {
             throw new IllegalStateException("Input method must have no arguments and return type " + channelClass.getCanonicalName());
         }
     }
 
-    private void findEventMethods() {
-        for (Method method : getClass().getMethods()) {
+    private void findEventMethods(Method[] methods, Class<C> channelClass) {
+        for (Method method : methods) {
             method.setAccessible(true);
             boolean validated = false;
             final InputLink inputLinkAnnotation = method.getAnnotation(InputLink.class);
             if (inputLinkAnnotation != null) {
-                validateEventMethod(method);
+                validateEventMethod(method, channelClass);
                 validated = true;
                 inputLinks.put(inputLinkAnnotation.value(), method);
             }
             final InputConnect inputConnectAnnotation = method.getAnnotation(InputConnect.class);
             if (inputConnectAnnotation != null) {
                 if (!validated) {
-                    validateEventMethod(method);
+                    validateEventMethod(method, channelClass);
                     validated = true;
                 }
                 inputConnects.put(inputConnectAnnotation.value(), method);
@@ -173,7 +201,7 @@ public abstract class Node<C> {
             final OutputLink outputLinkAnnotation = method.getAnnotation(OutputLink.class);
             if (outputLinkAnnotation != null) {
                 if (!validated) {
-                    validateEventMethod(method);
+                    validateEventMethod(method, channelClass);
                     validated = true;
                 }
                 outputLinks.put(outputLinkAnnotation.value(), method);
@@ -181,17 +209,37 @@ public abstract class Node<C> {
             final OutputConnect outputConnectAnnotation = method.getAnnotation(OutputConnect.class);
             if (outputConnectAnnotation != null) {
                 if (!validated) {
-                    validateEventMethod(method);
+                    validateEventMethod(method, channelClass);
                 }
                 outputConnects.put(outputConnectAnnotation.value(), method);
             }
         }
     }
 
-    private void validateEventMethod(Method method) {
+    private void validateEventMethod(Method method, Class<C> channelClass) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 2 || !Node.class.isAssignableFrom(parameterTypes[0]) || !channelClass.isAssignableFrom(parameterTypes[1])) {
             throw new IllegalStateException("Event method must have two argument of types " + Node.class.getCanonicalName() + " and " + channelClass.getCanonicalName());
+        }
+    }
+
+    private void findSettingMethods(Method[] methods) {
+        for (Method method : methods) {
+            method.setAccessible(true);
+            final Setting settingAnnotation = method.getAnnotation(Setting.class);
+            if (settingAnnotation != null) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                validateSettingMethod(parameterTypes);
+                final String name = settingAnnotation.value();
+                settings.put(name, method);
+                settingTypes.put(name, parameterTypes[0]);
+            }
+        }
+    }
+
+    private void validateSettingMethod(Class<?>[] parameterTypes) {
+        if (parameterTypes.length != 1) {
+            throw new IllegalStateException("Setting method must have only one argument");
         }
     }
 }

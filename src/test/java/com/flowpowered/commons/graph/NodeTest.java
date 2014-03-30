@@ -23,12 +23,16 @@
  */
 package com.flowpowered.commons.graph;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import com.flowpowered.commons.graph.Graph.Input;
 import com.flowpowered.commons.graph.Graph.InputConnect;
 import com.flowpowered.commons.graph.Graph.InputLink;
 import com.flowpowered.commons.graph.Graph.Output;
 import com.flowpowered.commons.graph.Graph.OutputConnect;
 import com.flowpowered.commons.graph.Graph.OutputLink;
+import com.flowpowered.commons.graph.Graph.Setting;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,52 +41,106 @@ import org.junit.Test;
  *
  */
 public class NodeTest {
-    private static StringNode expectedParentNode = null;
-    private static StringNode expectedChildNode = null;
+    private static StringNode11 expectedParentNode = null;
+    private static StringNode11 expectedChildNode = null;
     private static String expectChannel = null;
 
     @Test
     public void test() {
-        final StringNode guy = new StringNode("guy", "cool");
-        final StringNode bob = new StringNode("bob", "story");
-        final StringNode joe = new StringNode("joe", "bro");
-        final StringNode pal = new StringNode("pal", "...");
+        final StringNode11 guy = new StringNode12("guy", "cool", "stuff");
+        final StringNode11 bob = new StringNode11("bob", "story");
+        final StringNode11 joe = new StringNode11("joe", "bro");
+        final StringNode11 pal = new StringNode11("pal", "...");
+        final StringNode11 ron = new StringNode21("ron", "idk");
 
         /*
           Generates this graph:
 
                bob       1: guy to bob, channel is cool
-               / \       2: guy to joe, channel is cool
+               / \       2: guy to joe, channel is stuff
               1   3      3: bob to pal, channel is story
-             /     \
-          guy       pal
-             \
-              2
-               \
-               joe
+             /     \     4: pal to ron, channel is ...
+           guy     pal   5: joe to ron, channel is bro
+             \       \
+              2       4
+               \       \
+               joe -5- ron
          */
 
-        expectedParentNode = guy;
-        expectChannel = "cool";
+        guy.set("v1", 10);
+        guy.set("v2", "heh");
+        try {
+            guy.set("v1", 10.0);
+            Assert.fail();
+        } catch (Exception ignored) {
+        }
 
+        expectedParentNode = guy;
+
+        expectChannel = "cool";
         expectedChildNode = bob;
         bob.link(guy, "out", "in");
 
+        expectChannel = "stuff";
         expectedChildNode = joe;
-        joe.link(guy, "out", "in");
+        joe.link(guy, "out2", "in");
 
         expectedChildNode = pal;
-
         expectedParentNode = bob;
         expectChannel = "story";
         pal.link(bob, "out", "in");
+
+        expectedChildNode = ron;
+
+        expectedParentNode = pal;
+        expectChannel = "...";
+        ron.link(pal, "out", "in");
+
+        expectedParentNode = joe;
+        expectChannel = "bro";
+        ron.link(joe, "out", "in2");
+
+        validateParents(guy);
+        validateParents(bob, guy);
+        validateParents(pal, bob);
+        validateParents(joe, guy);
+        validateParents(ron, pal, joe);
+
+        validateChildren(guy, bob, joe);
+        validateChildren(bob, pal);
+        validateChildren(pal, ron);
+        validateChildren(joe, ron);
+        validateChildren(ron);
+
+        expectedParentNode = null;
+        expectedChildNode = null;
+        expectChannel = null;
+        ron.delink("in");
+
+        validateParents(ron, joe);
     }
 
-    private final class StringNode extends Node<String> {
+    @SafeVarargs
+    private static void validateParents(Node<String> node, Node<String>... parents) {
+        final Collection<Node<String>> expected = Arrays.asList(parents);
+        final Collection<Node<String>> actual = node.getParents();
+        Assert.assertTrue(actual.containsAll(expected));
+        Assert.assertTrue(expected.containsAll(actual));
+    }
+
+    @SafeVarargs
+    private static void validateChildren(Node<String> node, Node<String>... children) {
+        final Collection<Node<String>> expected = Arrays.asList(children);
+        final Collection<Node<String>> actual = node.getChildren();
+        Assert.assertTrue(actual.containsAll(expected));
+        Assert.assertTrue(expected.containsAll(actual));
+    }
+
+    private static class StringNode11 extends Node<String> {
         private final String out;
         private String in;
 
-        public StringNode(String name, String value) {
+        public StringNode11(String name, String value) {
             super(String.class, name);
             this.out = value;
         }
@@ -102,27 +160,90 @@ public class NodeTest {
         }
 
         @InputLink("in")
-        public void onInputLink(StringNode node, String channel) {
-            Assert.assertEquals(expectedParentNode, node);
-            Assert.assertEquals(expectChannel, channel);
+        public void onInputLink(StringNode11 node, String channel) {
+            validateParentAndChannel(node, channel);
         }
 
         @InputConnect("in")
-        public void onInputConnect(StringNode node, String channel) {
-            Assert.assertEquals(expectedParentNode, node);
-            Assert.assertEquals(expectChannel, channel);
+        public void onInputConnect(StringNode11 node, String channel) {
+            validateParentAndChannel(node, channel);
         }
 
         @OutputLink("out")
-        public void onOutputLink(StringNode node, String channel) {
-            Assert.assertEquals(expectedChildNode, node);
-            Assert.assertEquals(expectChannel, channel);
+        public void onOutputLink(StringNode11 node, String channel) {
+            validateChildAndChannel(node, channel);
         }
 
         @OutputConnect("out")
-        public void onOuputConnect(StringNode node, String channel) {
-            Assert.assertEquals(expectedChildNode, node);
-            Assert.assertEquals(expectChannel, channel);
+        public void onOuputConnect(StringNode11 node, String channel) {
+            validateChildAndChannel(node, channel);
         }
+
+        @Setting("v1")
+        public void setV1(Integer v1) {
+            Assert.assertEquals(10, v1.longValue());
+        }
+
+        @Setting("v2")
+        public void setV2(CharSequence v2) {
+            Assert.assertEquals("heh", v2);
+        }
+    }
+
+    private static class StringNode12 extends StringNode11 {
+        private String out2;
+
+        private StringNode12(String name, String value, String value2) {
+            super(name, value);
+            out2 = value2;
+        }
+
+        @Output("out2")
+        public String getOutput2() {
+            return out2;
+        }
+
+        @OutputLink("out2")
+        public void onOutput2Link(StringNode11 node, String channel) {
+            validateChildAndChannel(node, channel);
+        }
+
+        @OutputConnect("out2")
+        public void onOuput2Connect(StringNode11 node, String channel) {
+            validateChildAndChannel(node, channel);
+        }
+    }
+
+    private static class StringNode21 extends StringNode11 {
+        private String in2;
+
+        private StringNode21(String name, String value) {
+            super(name, value);
+        }
+
+        @Input("in2")
+        public void setInput2(String in) {
+            this.in2 = in;
+        }
+
+        @InputLink("in2")
+        public void onInput2Link(StringNode11 node, String channel) {
+            validateParentAndChannel(node, channel);
+        }
+
+        @InputConnect("in2")
+        public void onInput2Connect(StringNode11 node, String channel) {
+            validateParentAndChannel(node, channel);
+        }
+    }
+
+    private static void validateParentAndChannel(Node<String> node, String channel) {
+        Assert.assertEquals(expectedParentNode, node);
+        Assert.assertEquals(expectChannel, channel);
+    }
+
+    private static void validateChildAndChannel(Node<String> node, String channel) {
+        Assert.assertEquals(expectedChildNode, node);
+        Assert.assertEquals(expectChannel, channel);
     }
 }
