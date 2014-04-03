@@ -77,27 +77,22 @@ public class NodeTest {
 
         expectedParentNode = guy;
 
-        expectChannel = "cool";
         expectedChildNode = bob;
         bob.link(guy, "out", "in");
 
-        expectChannel = "stuff";
         expectedChildNode = joe;
         joe.link(guy, "out2", "in");
 
         expectedChildNode = pal;
         expectedParentNode = bob;
-        expectChannel = "story";
         pal.link(bob, "out", "in");
 
         expectedChildNode = ron;
 
         expectedParentNode = pal;
-        expectChannel = "...";
         ron.link(pal, "out", "in");
 
         expectedParentNode = joe;
-        expectChannel = "bro";
         ron.link(joe, "out", "in2");
 
         validateParents(guy);
@@ -114,7 +109,6 @@ public class NodeTest {
 
         expectedParentNode = null;
         expectedChildNode = null;
-        expectChannel = null;
         ron.delink("in");
 
         validateParents(ron, joe);
@@ -160,23 +154,21 @@ public class NodeTest {
         }
 
         @InputLink("in")
-        public void onInputLink(StringNode11 node, String channel) {
-            validateParentAndChannel(node, channel);
+        public void onInputLink(StringNode11 node) {
+            validateParent(node);
         }
 
         @InputConnect("in")
         public void onInputConnect(StringNode11 node, String channel) {
-            validateParentAndChannel(node, channel);
         }
 
         @OutputLink("out")
-        public void onOutputLink(StringNode11 node, String channel) {
-            validateChildAndChannel(node, channel);
+        public void onOutputLink(StringNode11 node) {
+            validateChild(node);
         }
 
         @OutputConnect("out")
         public void onOuputConnect(StringNode11 node, String channel) {
-            validateChildAndChannel(node, channel);
         }
 
         @Setting("v1")
@@ -204,13 +196,12 @@ public class NodeTest {
         }
 
         @OutputLink("out2")
-        public void onOutput2Link(StringNode11 node, String channel) {
-            validateChildAndChannel(node, channel);
+        public void onOutput2Link(StringNode11 node) {
+            validateChild(node);
         }
 
         @OutputConnect("out2")
         public void onOuput2Connect(StringNode11 node, String channel) {
-            validateChildAndChannel(node, channel);
         }
     }
 
@@ -227,23 +218,20 @@ public class NodeTest {
         }
 
         @InputLink("in2")
-        public void onInput2Link(StringNode11 node, String channel) {
-            validateParentAndChannel(node, channel);
+        public void onInput2Link(StringNode11 node) {
+            validateParent(node);
         }
 
         @InputConnect("in2")
         public void onInput2Connect(StringNode11 node, String channel) {
-            validateParentAndChannel(node, channel);
         }
     }
 
-    private static void validateParentAndChannel(Node<String> node, String channel) {
+    private static void validateParent(Node<String> node) {
         Assert.assertEquals(expectedParentNode, node);
-        Assert.assertEquals(expectChannel, channel);
     }
 
-    private static void validateChildAndChannel(Node<String> node, String channel) {
+    private static void validateChild(Node<String> node) {
         Assert.assertEquals(expectedChildNode, node);
-        Assert.assertEquals(expectChannel, channel);
     }
 }

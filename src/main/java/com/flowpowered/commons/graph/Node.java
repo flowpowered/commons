@@ -38,10 +38,11 @@ import com.flowpowered.commons.graph.Graph.Setting;
 
 public abstract class Node<C> {
     private final String name;
-    // Key is output, value is input
+    // Key is input, value is output
     private final Map<String, String> inputsToOutputs = new HashMap<>();
-    // Keys are input/output name
+    // Key is input name
     private final Map<String, Node<C>> parents = new HashMap<>();
+    // Key is output name
     private final Map<String, Node<C>> children = new HashMap<>();
     private final Map<String, Method> inputs = new HashMap<>();
     private final Map<String, Method> outputs = new HashMap<>();
@@ -82,21 +83,34 @@ public abstract class Node<C> {
     }
 
     public void link(Node<C> parent, String output, String input) {
-        final C channel = parent.getOutput(output);
-        setInput(input, channel);
         parents.put(input, parent);
         parent.children.put(output, this);
         inputsToOutputs.put(input, output);
-        callEvent(outputLinks.get(output), this, channel);
-        callEvent(inputLinks.get(input), parent, channel);
+        callLinkEvent(outputLinks.get(output), this);
+        callLinkEvent(inputLinks.get(input), parent);
     }
 
     public void delink(String input) {
-        setInput(input, null);
         final String output = inputsToOutputs.remove(input);
         parents.remove(input).children.remove(output);
-        callEvent(outputLinks.get(output), null, null);
-        callEvent(inputLinks.get(input), null, null);
+        callLinkEvent(outputLinks.get(output), null);
+        callLinkEvent(inputLinks.get(input), null);
+    }
+
+    protected void connect(String input) {
+        final String output = inputsToOutputs.get(input);
+        final Node<C> parent = parents.get(input);
+        final C channel = parent.getOutput(output);
+        setInput(input, channel);
+        callConnectEvent(outputConnects.get(output), this, channel);
+        callConnectEvent(inputConnects.get(input), parent, channel);
+    }
+
+    protected void disconnect(String input) {
+        setInput(input, null);
+        final String output = inputsToOutputs.remove(input);
+        callConnectEvent(outputConnects.get(output), null, null);
+        callConnectEvent(inputConnects.get(input), null, null);
     }
 
     public void set(String name, Object value) {
@@ -116,12 +130,22 @@ public abstract class Node<C> {
 
     public abstract void execute();
 
-    private void callEvent(Method event, Node<C> node, C channel) {
+    private void callLinkEvent(Method event, Node<C> node) {
+        if (event != null) {
+            try {
+                event.invoke(this, node);
+            } catch (Exception ex) {
+                throw new IllegalStateException("Failed to call link node event", ex);
+            }
+        }
+    }
+
+    private void callConnectEvent(Method event, Node<C> node, C channel) {
         if (event != null) {
             try {
                 event.invoke(this, node, channel);
             } catch (Exception ex) {
-                throw new IllegalStateException("Failed to call node event", ex);
+                throw new IllegalStateException("Failed to call connect node event", ex);
             }
         }
     }
@@ -186,14 +210,14 @@ public abstract class Node<C> {
             boolean validated = false;
             final InputLink inputLinkAnnotation = method.getAnnotation(InputLink.class);
             if (inputLinkAnnotation != null) {
-                validateEventMethod(method, channelClass);
+                validateLinkEventMethod(method);
                 validated = true;
                 inputLinks.put(inputLinkAnnotation.value(), method);
             }
             final InputConnect inputConnectAnnotation = method.getAnnotation(InputConnect.class);
             if (inputConnectAnnotation != null) {
                 if (!validated) {
-                    validateEventMethod(method, channelClass);
+                    validateConnectEventMethod(method, channelClass);
                     validated = true;
                 }
                 inputConnects.put(inputConnectAnnotation.value(), method);
@@ -201,7 +225,7 @@ public abstract class Node<C> {
             final OutputLink outputLinkAnnotation = method.getAnnotation(OutputLink.class);
             if (outputLinkAnnotation != null) {
                 if (!validated) {
-                    validateEventMethod(method, channelClass);
+                    validateLinkEventMethod(method);
                     validated = true;
                 }
                 outputLinks.put(outputLinkAnnotation.value(), method);
@@ -209,17 +233,24 @@ public abstract class Node<C> {
             final OutputConnect outputConnectAnnotation = method.getAnnotation(OutputConnect.class);
             if (outputConnectAnnotation != null) {
                 if (!validated) {
-                    validateEventMethod(method, channelClass);
+                    validateConnectEventMethod(method, channelClass);
                 }
                 outputConnects.put(outputConnectAnnotation.value(), method);
             }
         }
     }
 
-    private void validateEventMethod(Method method, Class<C> channelClass) {
+    private void validateLinkEventMethod(Method method) {
+        final Class<?>[] parameterTypes = method.getParameterTypes();
+        if (parameterTypes.length != 1 || !Node.class.isAssignableFrom(parameterTypes[0])) {
+            throw new IllegalStateException("Link event method must have one argument of type " + Node.class.getCanonicalName());
+        }
+    }
+
+    private void validateConnectEventMethod(Method method, Class<C> channelClass) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 2 || !Node.class.isAssignableFrom(parameterTypes[0]) || !channelClass.isAssignableFrom(parameterTypes[1])) {
-            throw new IllegalStateException("Event method must have two argument of types " + Node.class.getCanonicalName() + " and " + channelClass.getCanonicalName());
+            throw new IllegalStateException("Connect event method must have two arguments of types " + Node.class.getCanonicalName() + " and " + channelClass.getCanonicalName());
         }
     }
 
