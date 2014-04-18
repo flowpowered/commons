@@ -112,12 +112,33 @@ public class NodeTest {
         ron.delink("in");
 
         validateParents(ron, joe);
+
+        expectedChildNode = ron;
+        expectedParentNode = pal;
+        ron.link(pal, "out", "in");
+
+        validateParents(ron, pal, joe);
+
+        final Graph<String> graph = new Graph<>();
+        graph.addNode(guy);
+        graph.addNode(bob);
+        graph.addNode(joe);
+        graph.addNode(pal);
+        graph.addNode(ron);
+        graph.build();
+
+        expectedParentNode = null;
+        expectedChildNode = null;
+        bob.delink("in");
+        pal.delink("in");
+        graph.removeNode(bob);
+        graph.build();
     }
 
     @SafeVarargs
     private static void validateParents(Node<String> node, Node<String>... parents) {
         final Collection<Node<String>> expected = Arrays.asList(parents);
-        final Collection<Node<String>> actual = node.getParents();
+        final Collection<Node<String>> actual = node.getParents().values();
         Assert.assertTrue(actual.containsAll(expected));
         Assert.assertTrue(expected.containsAll(actual));
     }
@@ -125,7 +146,7 @@ public class NodeTest {
     @SafeVarargs
     private static void validateChildren(Node<String> node, Node<String>... children) {
         final Collection<Node<String>> expected = Arrays.asList(children);
-        final Collection<Node<String>> actual = node.getChildren();
+        final Collection<Node<String>> actual = node.getChildren().values();
         Assert.assertTrue(actual.containsAll(expected));
         Assert.assertTrue(expected.containsAll(actual));
     }
@@ -160,6 +181,7 @@ public class NodeTest {
 
         @InputConnect("in")
         public void onInputConnect(StringNode11 node, String channel) {
+            System.out.println(getName() + " <- " + (node != null ? node.getName() : "null") + " : " + channel);
         }
 
         @OutputLink("out")
@@ -169,6 +191,7 @@ public class NodeTest {
 
         @OutputConnect("out")
         public void onOuputConnect(StringNode11 node, String channel) {
+            System.out.println(getName() + " -> " + (node != null ? node.getName() : "null") + " : " + channel);
         }
 
         @Setting("v1")
@@ -202,6 +225,7 @@ public class NodeTest {
 
         @OutputConnect("out2")
         public void onOuput2Connect(StringNode11 node, String channel) {
+            System.out.println(getName() + " -> " + (node != null ? node.getName() : "null") + " : " + channel);
         }
     }
 
@@ -224,6 +248,7 @@ public class NodeTest {
 
         @InputConnect("in2")
         public void onInput2Connect(StringNode11 node, String channel) {
+            System.out.println(getName() + " <- " + (node != null ? node.getName() : "null") + " : " + channel);
         }
     }
 

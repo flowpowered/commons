@@ -24,7 +24,7 @@
 package com.flowpowered.commons.graph;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,11 +38,11 @@ import com.flowpowered.commons.graph.Graph.Setting;
 
 public abstract class Node<C> {
     private final String name;
-    // Key is input, value is output
-    private final Map<String, String> inputsToOutputs = new HashMap<>();
-    // Key is input name
+    // Maps child input name to parent output name
+    private final Map<String, String> links = new HashMap<>();
+    // Maps child input name to parent node
     private final Map<String, Node<C>> parents = new HashMap<>();
-    // Key is output name
+    // Maps parent output name to child node
     private final Map<String, Node<C>> children = new HashMap<>();
     private final Map<String, Method> inputs = new HashMap<>();
     private final Map<String, Method> outputs = new HashMap<>();
@@ -50,7 +50,7 @@ public abstract class Node<C> {
     private final Map<String, Method> inputConnects = new HashMap<>();
     private final Map<String, Method> outputLinks = new HashMap<>();
     private final Map<String, Method> outputConnects = new HashMap<>();
-    // Keys are setting name
+    // Keys are setting names
     private final Map<String, Method> settings = new HashMap<>();
     private final Map<String, Class<?>> settingTypes = new HashMap<>();
 
@@ -70,47 +70,51 @@ public abstract class Node<C> {
         return parents.get(channel);
     }
 
-    public Collection<Node<C>> getParents() {
-        return parents.values();
+    public Map<String, Node<C>> getParents() {
+        return Collections.unmodifiableMap(parents);
     }
 
     public Node<C> getChild(String channel) {
         return children.get(channel);
     }
 
-    public Collection<Node<C>> getChildren() {
-        return children.values();
+    public Map<String, Node<C>> getChildren() {
+        return Collections.unmodifiableMap(children);
+    }
+
+    public Map<String, String> getLinks() {
+        return Collections.unmodifiableMap(links);
     }
 
     public void link(Node<C> parent, String output, String input) {
         parents.put(input, parent);
         parent.children.put(output, this);
-        inputsToOutputs.put(input, output);
-        callLinkEvent(outputLinks.get(output), this);
-        callLinkEvent(inputLinks.get(input), parent);
+        links.put(input, output);
+        callLinkEvent(parent.outputLinks.get(output), parent, this);
+        callLinkEvent(inputLinks.get(input), this, parent);
     }
 
     public void delink(String input) {
-        final String output = inputsToOutputs.remove(input);
-        parents.remove(input).children.remove(output);
-        callLinkEvent(outputLinks.get(output), null);
-        callLinkEvent(inputLinks.get(input), null);
+        final String output = links.remove(input);
+        final Node<C> parent = parents.remove(input);
+        parent.children.remove(output);
+        callLinkEvent(parent.outputLinks.get(output), parent, null);
+        callLinkEvent(inputLinks.get(input), this, null);
     }
 
     protected void connect(String input) {
-        final String output = inputsToOutputs.get(input);
+        final String output = links.get(input);
         final Node<C> parent = parents.get(input);
         final C channel = parent.getOutput(output);
         setInput(input, channel);
-        callConnectEvent(outputConnects.get(output), this, channel);
-        callConnectEvent(inputConnects.get(input), parent, channel);
+        callConnectEvent(parent.outputConnects.get(output), parent, this, channel);
+        callConnectEvent(inputConnects.get(input), this, parent, channel);
     }
 
-    protected void disconnect(String input) {
+    protected void disconnect(Node<C> parent, String output, String input) {
         setInput(input, null);
-        final String output = inputsToOutputs.remove(input);
-        callConnectEvent(outputConnects.get(output), null, null);
-        callConnectEvent(inputConnects.get(input), null, null);
+        callConnectEvent(parent.outputConnects.get(output), parent, null, null);
+        callConnectEvent(inputConnects.get(input), this, null, null);
     }
 
     public void set(String name, Object value) {
@@ -130,20 +134,20 @@ public abstract class Node<C> {
 
     public abstract void execute();
 
-    private void callLinkEvent(Method event, Node<C> node) {
+    private void callLinkEvent(Method event, Node<C> target, Node<C> node) {
         if (event != null) {
             try {
-                event.invoke(this, node);
+                event.invoke(target, node);
             } catch (Exception ex) {
                 throw new IllegalStateException("Failed to call link node event", ex);
             }
         }
     }
 
-    private void callConnectEvent(Method event, Node<C> node, C channel) {
+    private void callConnectEvent(Method event, Node<C> target, Node<C> node, C channel) {
         if (event != null) {
             try {
-                event.invoke(this, node, channel);
+                event.invoke(target, node, channel);
             } catch (Exception ex) {
                 throw new IllegalStateException("Failed to call connect node event", ex);
             }
