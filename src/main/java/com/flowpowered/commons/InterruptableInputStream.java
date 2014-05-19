@@ -6,9 +6,15 @@ import java.io.InterruptedIOException;
 
 public class InterruptableInputStream extends InputStream {
     private final InputStream in;
+    private final long sleepTime;
 
     public InterruptableInputStream(InputStream in) {
+        this(in, -1);
+    }
+
+    public InterruptableInputStream(InputStream in, long sleepTime) {
         this.in = in;
+        this.sleepTime = sleepTime;
     }
 
     @Override
@@ -20,7 +26,15 @@ public class InterruptableInputStream extends InputStream {
             if (Thread.interrupted()) {
                 throw new InterruptedIOException();
             }
-            Thread.yield();
+            if (sleepTime < 0) {
+                Thread.yield();
+            } else {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    throw new InterruptedIOException();
+                }
+            }
         }
     }
 
