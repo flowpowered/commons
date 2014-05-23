@@ -26,7 +26,9 @@ package com.flowpowered.commons.console;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -51,15 +53,29 @@ public class JLineConsole {
     private final ConsoleCommandThread commandThread;
 
     public JLineConsole(CommandCallback callback, Completer completer) {
-        this(callback, completer, LoggerFactory.getLogger("JLineConsole"));
+        this(callback, completer, null);
     }
 
     public JLineConsole(CommandCallback callback, Completer completer, Logger logger) {
+        this(callback, completer, logger, null, null);
+    }
+
+    public JLineConsole(CommandCallback callback, Completer completer, Logger logger, OutputStream out, InputStream in) {
         this.callback = callback;
-        this.logger = logger;
+        if (logger == null) {
+            this.logger = LoggerFactory.getLogger("JLineConsole");
+        } else {
+            this.logger = logger;
+        }
+        if (out == null) {
+            out = System.out;
+        }
+        if (in == null) {
+            in = new FileInputStream(FileDescriptor.in);
+        }
 
         try {
-            reader = new ConsoleReader(new InterruptableInputStream(new FileInputStream(FileDescriptor.in)), System.out);
+            reader = new ConsoleReader(new InterruptableInputStream(in, 10), out);
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }

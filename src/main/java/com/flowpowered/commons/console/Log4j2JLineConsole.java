@@ -1,5 +1,8 @@
 package com.flowpowered.commons.console;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
 
@@ -22,6 +25,10 @@ public class Log4j2JLineConsole extends JLineConsole {
 
     public Log4j2JLineConsole(CommandCallback callback, Completer completer, Logger logger) {
         super(callback, completer, logger);
+    }
+
+    public Log4j2JLineConsole(CommandCallback callback, Completer completer, Logger logger, OutputStream out, InputStream in) {
+        super(callback, completer, logger, out, in);
     }
 
     @Override
