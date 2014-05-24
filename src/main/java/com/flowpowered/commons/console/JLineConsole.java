@@ -138,7 +138,6 @@ public class JLineConsole {
     protected void closeImpl() {
         try {
             commandThread.interrupt();
-            reader.setCursorPosition(0);
             reader.killLine();
             reader.print(String.valueOf(ConsoleReader.RESET_LINE));
             reader.flush();
