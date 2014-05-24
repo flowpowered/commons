@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class StringUtil {
     /**
@@ -279,5 +280,11 @@ public class StringUtil {
         // our last action in the above loop was to switch d and p, so p now
         // actually has the most recent cost counts
         return p[n];
+    }
+
+    private static Pattern escapeRegexPattern = Pattern.compile("[^a-zA-Z0-9]");
+
+    public static String escapeRegex(String str) {
+        return escapeRegexPattern.matcher(str).replaceAll("\\\\$0");
     }
 }
