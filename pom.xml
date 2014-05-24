@@ -135,6 +135,12 @@
             <artifactId>lidalia-slf4j-ext</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+        	<groupId>com.github.wolf480pl</groupId>
+        	<artifactId>jline-log4j2-appender</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
+        	<optional>true</optional>
+        </dependency>
         <!-- Testing only -->
         <dependency>
             <groupId>junit</groupId>
@@ -165,12 +171,6 @@
             <artifactId>powermock-module-junit4</artifactId>
             <version>1.5.1</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-        	<groupId>com.github.wolf480pl</groupId>
-        	<artifactId>jline-log4j2-appender</artifactId>
-        	<version>0.0.1-SNAPSHOT</version>
-        	<optional>true</optional>
         </dependency>
     </dependencies>
 

@@ -1,7 +1,5 @@
 package com.flowpowered.commons.console;
 
-import java.util.List;
-
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
 
@@ -18,12 +16,12 @@ import com.github.wolf480pl.jline_log4j2_appender.ConsoleSetupMessage.Action;
 public class Log4j2JLineConsole extends JLineConsole {
     private ConsoleReader reader;
 
-    public Log4j2JLineConsole(CommandCallback callback, List<Completer> completers) {
-        super(callback, completers);
+    public Log4j2JLineConsole(CommandCallback callback, Completer completer) {
+        super(callback, completer);
     }
 
-    public Log4j2JLineConsole(CommandCallback callback, List<Completer> completers, Logger logger) {
-        super(callback, completers, logger);
+    public Log4j2JLineConsole(CommandCallback callback, Completer completer, Logger logger) {
+        super(callback, completer, logger);
     }
 
     @Override

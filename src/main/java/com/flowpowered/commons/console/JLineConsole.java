@@ -29,13 +29,10 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import jline.console.ConsoleReader;
-import jline.console.completer.ArgumentCompleter;
 import jline.console.completer.Completer;
-import jline.console.completer.NullCompleter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +50,11 @@ public class JLineConsole {
     private final Logger logger;
     private final ConsoleCommandThread commandThread;
 
-    public JLineConsole(CommandCallback callback, List<Completer> completers) {
-        this(callback, completers, LoggerFactory.getLogger("JLineConsole"));
+    public JLineConsole(CommandCallback callback, Completer completer) {
+        this(callback, completer, LoggerFactory.getLogger("JLineConsole"));
     }
 
-    public JLineConsole(CommandCallback callback, List<Completer> completers, Logger logger) {
+    public JLineConsole(CommandCallback callback, Completer completer, Logger logger) {
         this.callback = callback;
         this.logger = logger;
 
@@ -70,13 +67,11 @@ public class JLineConsole {
         setupConsole(reader);
 
         @SuppressWarnings ("unchecked")
-        final Collection<Completer> completer = reader.getCompleters();
-        for (Completer c : new ArrayList<>(completer)) {
+        final Collection<Completer> oldCompleters = reader.getCompleters();
+        for (Completer c : new ArrayList<>(oldCompleters)) {
             reader.removeCompleter(c);
         }
-        Completer[] list = completers.toArray(new Completer[completer.size() + 1]);
-        list[list.length - 1] = new NullCompleter();
-        reader.addCompleter(new ArgumentCompleter(list));
+        reader.addCompleter(completer);
 
         commandThread = new ConsoleCommandThread();
         commandThread.start();
