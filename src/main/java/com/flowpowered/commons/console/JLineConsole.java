@@ -23,19 +23,23 @@
  */
 package com.flowpowered.commons.console;
 
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import jline.console.ConsoleReader;
-import jline.console.completer.ArgumentCompleter;
 import jline.console.completer.Completer;
-import jline.console.completer.NullCompleter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.flowpowered.commons.InterruptableInputStream;
 
 
 /**
@@ -48,31 +52,52 @@ public class JLineConsole {
     private final Logger logger;
     private final ConsoleCommandThread commandThread;
 
-    public JLineConsole(CommandCallback callback, List<Completer> completers) {
-        this(callback, completers, LoggerFactory.getLogger("JLineConsole"));
+    public JLineConsole(CommandCallback callback, Completer completer) {
+        this(callback, completer, null);
     }
 
-    public JLineConsole(CommandCallback callback, List<Completer> completers, Logger logger) {
+    public JLineConsole(CommandCallback callback, Completer completer, Logger logger) {
+        this(callback, completer, logger, null, null);
+    }
+
+    public JLineConsole(CommandCallback callback, Completer completer, Logger logger, OutputStream out, InputStream in) {
         this.callback = callback;
-        this.logger = logger;
+        if (logger == null) {
+            this.logger = LoggerFactory.getLogger("JLineConsole");
+        } else {
+            this.logger = logger;
+        }
+        if (out == null) {
+            out = System.out;
+        }
+        if (in == null) {
+            in = new FileInputStream(FileDescriptor.in);
+        }
 
         try {
-            reader = new ConsoleReader();
+            reader = new ConsoleReader(new InterruptableInputStream(in, 10), out);
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }
 
+        setupConsole(reader);
+
         @SuppressWarnings ("unchecked")
-        final Collection<Completer> completer = reader.getCompleters();
-        for (Completer c : new ArrayList<>(completer)) {
+        final Collection<Completer> oldCompleters = reader.getCompleters();
+        for (Completer c : new ArrayList<>(oldCompleters)) {
             reader.removeCompleter(c);
         }
-        Completer[] list = completers.toArray(new Completer[completer.size() + 1]);
-        list[list.length - 1] = new NullCompleter();
-        reader.addCompleter(new ArgumentCompleter(list));
+        reader.addCompleter(completer);
 
         commandThread = new ConsoleCommandThread();
         commandThread.start();
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    protected void setupConsole(ConsoleReader reader) {
     }
 
     private class ConsoleCommandThread extends Thread {
@@ -86,6 +111,7 @@ public class JLineConsole {
             String command;
             while (!closed.get()) {
                 try {
+                    reader.print(String.valueOf(ConsoleReader.RESET_LINE));
                     command = reader.readLine(">", null);
 
                     if (command == null || command.trim().length() == 0) {
@@ -93,6 +119,8 @@ public class JLineConsole {
                     }
 
                     callback.handleCommand(command);
+                } catch (InterruptedIOException e) {
+                    // ignore
                 } catch (Exception ex) {
                     // TODO: Maybe it should be error instead of warn?
                     logger.warn("Exception in console command thread:", ex);
@@ -107,9 +135,11 @@ public class JLineConsole {
         }
     }
 
-    private void closeImpl() {
+    protected void closeImpl() {
         try {
+            commandThread.interrupt();
             reader.killLine();
+            reader.print(String.valueOf(ConsoleReader.RESET_LINE));
             reader.flush();
         } catch (IOException ex) {
             // TODO: Maybe it should be warn instead of error?
