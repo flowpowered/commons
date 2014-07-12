@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,10 @@ import com.flowpowered.commons.InterruptableInputStream;
  * A JLine console wrapper.
  */
 public class JLineConsole {
+    public static final int INPUT_THREAD_YIELD = -1;
+    public static final int INPUT_THREAD_BLOCK = -2;
+    public static final int INPUT_THREAD_DEFAULT = SystemUtils.IS_OS_WINDOWS ? INPUT_THREAD_BLOCK : 10;
+
     private final ConsoleReader reader;
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final CommandCallback callback;
@@ -60,7 +65,15 @@ public class JLineConsole {
         this(callback, completer, logger, null, null);
     }
 
+    public JLineConsole(CommandCallback callback, Completer completer, Logger logger, int inThreadSleepTime) {
+        this(callback, completer, logger, inThreadSleepTime, null, null);
+    }
+
     public JLineConsole(CommandCallback callback, Completer completer, Logger logger, OutputStream out, InputStream in) {
+    	this(callback, completer, logger, INPUT_THREAD_DEFAULT, out, in);
+    }
+    
+    public JLineConsole(CommandCallback callback, Completer completer, Logger logger, int inThreadSleepTime, OutputStream out, InputStream in) {
         this.callback = callback;
         if (logger == null) {
             this.logger = LoggerFactory.getLogger("JLineConsole");
@@ -73,9 +86,13 @@ public class JLineConsole {
         if (in == null) {
             in = new FileInputStream(FileDescriptor.in);
         }
+        
+        if (inThreadSleepTime != INPUT_THREAD_BLOCK) {
+        	in = new InterruptableInputStream(in, inThreadSleepTime);
+        }
 
         try {
-            reader = new ConsoleReader(new InterruptableInputStream(in, 10), out);
+            reader = new ConsoleReader(in, out);
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }

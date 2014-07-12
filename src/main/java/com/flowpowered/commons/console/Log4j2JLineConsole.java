@@ -27,8 +27,16 @@ public class Log4j2JLineConsole extends JLineConsole {
         super(callback, completer, logger);
     }
 
+    public Log4j2JLineConsole(CommandCallback callback, Completer completer, Logger logger, int inThreadSleepTime) {
+        super(callback, completer, logger, inThreadSleepTime);
+    }
+
     public Log4j2JLineConsole(CommandCallback callback, Completer completer, Logger logger, OutputStream out, InputStream in) {
         super(callback, completer, logger, out, in);
+    }
+
+    public Log4j2JLineConsole(CommandCallback callback, Completer completer, Logger logger, int inThreadSleepTime, OutputStream out, InputStream in) {
+        super(callback, completer, logger, inThreadSleepTime, out, in);
     }
 
     @Override
