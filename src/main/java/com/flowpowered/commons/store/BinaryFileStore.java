@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2013 Spout LLC <https://spout.org/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.flowpowered.commons.store;
 
 import java.io.BufferedInputStream;
@@ -40,114 +39,114 @@ import java.util.Map.Entry;
  * This implements a SimpleStore that is stored in memory. The save and load methods can be used to write the map to a binary file.
  */
 public class BinaryFileStore extends MemoryStore<Integer> {
-	private File file;
-	private boolean dirty = true;
+    private File file;
+    private boolean dirty = true;
 
-	public BinaryFileStore(File file) {
-		super();
-		this.file = file;
-	}
+    public BinaryFileStore(File file) {
+        super();
+        this.file = file;
+    }
 
-	public BinaryFileStore() {
-		this(null);
-	}
+    public BinaryFileStore() {
+        this(null);
+    }
 
-	public synchronized void setFile(File file) {
-		this.file = file;
-	}
+    public synchronized void setFile(File file) {
+        this.file = file;
+    }
 
-	public synchronized File getFile() {
-		return file;
-	}
+    public synchronized File getFile() {
+        return file;
+    }
 
-	@Override
-	public synchronized boolean clear() {
-		dirty = true;
-		return super.clear();
-	}
+    @Override
+    public synchronized boolean clear() {
+        dirty = true;
+        return super.clear();
+    }
 
-	@Override
-	public synchronized boolean save() {
-		if (!dirty) {
-			return true;
-		}
+    @Override
+    public synchronized boolean save() {
+        if (!dirty) {
+            return true;
+        }
 
-		boolean saved = true;
-		DataOutputStream out = null;
-		try {
-			out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-			Iterator<Entry<String, Integer>> itr = super.getEntrySet().iterator();
+        boolean saved = true;
+        DataOutputStream out = null;
+        try {
+            out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+            Iterator<Entry<String, Integer>> itr = super.getEntrySet().iterator();
 
-			while (itr.hasNext()) {
-				Entry<String, Integer> next = itr.next();
-				out.writeInt(next.getValue());
-				out.writeUTF(next.getKey());
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			saved = false;
-		} finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-				saved = false;
-			}
-			if (saved) {
-				dirty = false;
-			}
-		}
-		return saved;
-	}
+            while (itr.hasNext()) {
+                Entry<String, Integer> next = itr.next();
+                out.writeInt(next.getValue());
+                out.writeUTF(next.getKey());
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            saved = false;
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                saved = false;
+            }
+            if (saved) {
+                dirty = false;
+            }
+        }
+        return saved;
+    }
 
-	@Override
-	public synchronized boolean load() {
-		boolean loaded = true;
-		DataInputStream in = null;
-		try {
-			in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+    @Override
+    public synchronized boolean load() {
+        boolean loaded = true;
+        DataInputStream in = null;
+        try {
+            in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 
-			boolean eof = false;
-			while (!eof) {
-				try {
-					Integer id = in.readInt();
-					String key = in.readUTF();
-					set(key, id);
-				} catch (EOFException eofe) {
-					eof = true;
-				}
-			}
-		} catch (IOException ioe) {
-			loaded = false;
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (IOException ioe) {
-				loaded = false;
-			}
-		}
-		if (loaded) {
-			dirty = false;
-		}
-		return loaded;
-	}
+            boolean eof = false;
+            while (!eof) {
+                try {
+                    Integer id = in.readInt();
+                    String key = in.readUTF();
+                    set(key, id);
+                } catch (EOFException eofe) {
+                    eof = true;
+                }
+            }
+        } catch (IOException ioe) {
+            loaded = false;
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException ioe) {
+                loaded = false;
+            }
+        }
+        if (loaded) {
+            dirty = false;
+        }
+        return loaded;
+    }
 
-	@Override
-	public synchronized Integer remove(String key) {
-		Integer value = super.remove(key);
-		if (value != null) {
-			dirty = true;
-		}
-		return value;
-	}
+    @Override
+    public synchronized Integer remove(String key) {
+        Integer value = super.remove(key);
+        if (value != null) {
+            dirty = true;
+        }
+        return value;
+    }
 
-	@Override
-	public synchronized Integer set(String key, Integer value) {
-		dirty = true;
-		return super.set(key, value);
-	}
+    @Override
+    public synchronized Integer set(String key, Integer value) {
+        dirty = true;
+        return super.set(key, value);
+    }
 }

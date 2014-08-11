@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2013 Spout LLC <https://spout.org/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,79 +25,79 @@ package com.flowpowered.commons.sanitation;
 
 public class SafeCast {
 
-	public static long toLong(Object o, long def) {
-		if (!(o instanceof Long)) {
-			return def;
-		}
+    public static long toLong(Object o, long def) {
+        if (!(o instanceof Long)) {
+            return def;
+        }
 
-		return (Long) o;
-	}
+        return (Long) o;
+    }
 
-	public static int toInt(Object o, int def) {
-		if (!(o instanceof Integer)) {
-			return def;
-		}
+    public static int toInt(Object o, int def) {
+        if (!(o instanceof Integer)) {
+            return def;
+        }
 
-		return (Integer) o;
-	}
+        return (Integer) o;
+    }
 
-	public static byte toByte(Object o, byte def) {
-		if (!(o instanceof Byte)) {
-			return def;
-		}
+    public static byte toByte(Object o, byte def) {
+        if (!(o instanceof Byte)) {
+            return def;
+        }
 
-		return (Byte) o;
-	}
+        return (Byte) o;
+    }
 
-	public static float toFloat(Object o, float def) {
-		if (!(o instanceof Float)) {
-			return def;
-		}
+    public static float toFloat(Object o, float def) {
+        if (!(o instanceof Float)) {
+            return def;
+        }
 
-		return (Float) o;
-	}
+        return (Float) o;
+    }
 
-	public static byte[] toByteArray(Object o, byte[] def) {
-		if (!(o instanceof byte[])) {
-			return def;
-		}
+    public static byte[] toByteArray(Object o, byte[] def) {
+        if (!(o instanceof byte[])) {
+            return def;
+        }
 
-		return (byte[]) o;
-	}
+        return (byte[]) o;
+    }
 
-	public static short[] toShortArray(Object o, short[] def) {
-		if (!(o instanceof short[])) {
-			return def;
-		}
+    public static short[] toShortArray(Object o, short[] def) {
+        if (!(o instanceof short[])) {
+            return def;
+        }
 
-		return (short[]) o;
-	}
+        return (short[]) o;
+    }
 
-	public static int[] toIntArray(Object o, int[] def) {
-		if (!(o instanceof int[])) {
-			return def;
-		}
+    public static int[] toIntArray(Object o, int[] def) {
+        if (!(o instanceof int[])) {
+            return def;
+        }
 
-		return (int[]) o;
-	}
+        return (int[]) o;
+    }
 
-	public static String toString(Object o, String def) {
-		if (!(o instanceof String)) {
-			return def;
-		}
+    public static String toString(Object o, String def) {
+        if (!(o instanceof String)) {
+            return def;
+        }
 
-		return (String) o;
-	}
+        return (String) o;
+    }
 
-	public static <T, U extends T> T toGeneric(Object o, U def, Class<T> clazz) {
-		if (o == null) {
-			return def;
-		}
+    public static <T, U extends T> T toGeneric(Object o, U def, Class<T> clazz) {
+        if (o == null) {
+            return def;
+        }
 
-		try {
-			return clazz.cast(o);
-		} catch (ClassCastException e) {
-			return def;
-		}
-	}
+        try {
+            return clazz.cast(o);
+        } catch (ClassCastException e) {
+            return def;
+        }
+    }
 }

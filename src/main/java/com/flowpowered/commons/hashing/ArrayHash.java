@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2013 Spout LLC <https://spout.org/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,35 +25,35 @@ package com.flowpowered.commons.hashing;
 
 public class ArrayHash {
 
-	public static long hash(byte[] array) {
-		long hash = 1;
-		for (int i = 0; i < array.length; i++) {
-			hash += (hash << 5) + array[i];
-		}
-		return hash;
-	}
+    public static long hash(byte[] array) {
+        long hash = 1;
+        for (int i = 0; i < array.length; i++) {
+            hash += (hash << 5) + array[i];
+        }
+        return hash;
+    }
 
-	public static long hash(short[] array) {
-		long hash = 1;
-		for (int i = 0; i < array.length; i++) {
-			hash += (hash << 5) + array[i];
-		}
-		return hash;
-	}
+    public static long hash(short[] array) {
+        long hash = 1;
+        for (int i = 0; i < array.length; i++) {
+            hash += (hash << 5) + array[i];
+        }
+        return hash;
+    }
 
-	public static long hash(int[] array) {
-		long hash = 1;
-		for (int i = 0; i < array.length; i++) {
-			hash += (hash << 5) + array[i];
-		}
-		return hash;
-	}
+    public static long hash(int[] array) {
+        long hash = 1;
+        for (int i = 0; i < array.length; i++) {
+            hash += (hash << 5) + array[i];
+        }
+        return hash;
+    }
 
-	public static long hash(long[] array) {
-		long hash = 1;
-		for (int i = 0; i < array.length; i++) {
-			hash += (hash << 5) + array[i];
-		}
-		return hash;
-	}
+    public static long hash(long[] array) {
+        long hash = 1;
+        for (int i = 0; i < array.length; i++) {
+            hash += (hash << 5) + array[i];
+        }
+        return hash;
+    }
 }

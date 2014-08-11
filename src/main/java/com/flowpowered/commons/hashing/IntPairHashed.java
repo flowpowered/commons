@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2013 Spout LLC <https://spout.org/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,37 +25,37 @@ package com.flowpowered.commons.hashing;
 
 public class IntPairHashed {
 
-	/**
-	 * Creates a long key from 2 ints
-	 *
-	 * @param key1 an <code>int</code> value
-	 * @param key2 an <code>int</code> value
-	 *
-	 * @return a long which is the concatenation of key1 and key2
-	 */
-	public static long key(int key1, int key2) {
-		return (long) key1 << 32 | key2 & 0xFFFFFFFFL;
-	}
+    /**
+     * Creates a long key from 2 ints
+     *
+     * @param key1 an <code>int</code> value
+     * @param key2 an <code>int</code> value
+     *
+     * @return a long which is the concatenation of key1 and key2
+     */
+    public static long key(int key1, int key2) {
+        return (long) key1 << 32 | key2 & 0xFFFFFFFFL;
+    }
 
-	/**
-	 * Gets the first 32-bit integer value from an long key
-	 *
-	 * @param key to get from
-	 *
-	 * @return the first 32-bit integer value in the key
-	 */
-	public static int key1(long key) {
-		return (int) (key >> 32 & 0xFFFFFFFFL);
-	}
+    /**
+     * Gets the first 32-bit integer value from an long key
+     *
+     * @param key to get from
+     *
+     * @return the first 32-bit integer value in the key
+     */
+    public static int key1(long key) {
+        return (int) (key >> 32 & 0xFFFFFFFFL);
+    }
 
-	/**
-	 * Gets the second 32-bit integer value from an long key
-	 *
-	 * @param key to get from
-	 *
-	 * @return the second 32-bit integer value in the key
-	 */
-	public static int key2(long key) {
-		return (int) (key & 0xFFFFFFFFL);
-	}
+    /**
+     * Gets the second 32-bit integer value from an long key
+     *
+     * @param key to get from
+     *
+     * @return the second 32-bit integer value in the key
+     */
+    public static int key2(long key) {
+        return (int) (key & 0xFFFFFFFFL);
+    }
 }

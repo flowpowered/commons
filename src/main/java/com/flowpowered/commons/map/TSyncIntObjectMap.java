@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2013 Spout LLC <https://spout.org/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,12 +31,12 @@ import gnu.trove.map.TIntObjectMap;
  * @param <V> the value type
  */
 public interface TSyncIntObjectMap<V> extends TIntObjectMap<V> {
-	/**
-	 * Removes a key/value pair from the map, but only if the key is mapped to a given value
-	 *
-	 * @param key the key
-	 * @param value the expected value
-	 * @return true if on success
-	 */
-	public boolean remove(int key, V value);
+    /**
+     * Removes a key/value pair from the map, but only if the key is mapped to a given value
+     *
+     * @param key the key
+     * @param value the expected value
+     * @return true if on success
+     */
+    public boolean remove(int key, V value);
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2013 Spout LLC <https://spout.org/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -70,7 +70,7 @@ public class JLineConsole {
     }
 
     public JLineConsole(CommandCallback callback, Completer completer, Logger logger, OutputStream out, InputStream in) {
-    	this(callback, completer, logger, INPUT_THREAD_DEFAULT, out, in);
+        this(callback, completer, logger, INPUT_THREAD_DEFAULT, out, in);
     }
     
     public JLineConsole(CommandCallback callback, Completer completer, Logger logger, int inThreadSleepTime, OutputStream out, InputStream in) {
@@ -88,7 +88,7 @@ public class JLineConsole {
         }
         
         if (inThreadSleepTime != INPUT_THREAD_BLOCK) {
-        	in = new InterruptableInputStream(in, inThreadSleepTime);
+            in = new InterruptableInputStream(in, inThreadSleepTime);
         }
 
         try {

@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2013 Spout LLC <https://spout.org/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.flowpowered.commons.typechecker;
 
 import java.util.Collection;
 
 public class CollectionTypeChecker<T, U extends Collection<? extends T>> extends TypeChecker<U> {
-	private final TypeChecker<? extends T> elementChecker;
+    private final TypeChecker<? extends T> elementChecker;
 
-	@SuppressWarnings ("unchecked")
-	protected CollectionTypeChecker(Class<? super U> collectionType, TypeChecker<? extends T> elementChecker) {
-		super((Class<U>) collectionType);
+    @SuppressWarnings ("unchecked")
+    protected CollectionTypeChecker(Class<? super U> collectionType, TypeChecker<? extends T> elementChecker) {
+        super((Class<U>) collectionType);
 
-		this.elementChecker = elementChecker;
-	}
+        this.elementChecker = elementChecker;
+    }
 
-	@Override
-	public U check(Object object) {
-		U collection = super.check(object);
+    @Override
+    public U check(Object object) {
+        U collection = super.check(object);
 
-		for (Object element : collection) {
-			elementChecker.check(element);
-		}
+        for (Object element : collection) {
+            elementChecker.check(element);
+        }
 
-		return collection;
-	}
+        return collection;
+    }
 }

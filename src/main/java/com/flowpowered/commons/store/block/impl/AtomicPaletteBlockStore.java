@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2013 Spout LLC <https://spout.org/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -89,15 +89,15 @@ public class AtomicPaletteBlockStore implements AtomicBlockStore {
         store.set(palette, blockArrayWidth, variableWidthBlockArray);
     }
 
-	private static int[] toIntArray(short[] blocks, short[] data) {
-		if (blocks == null) return null;
-		int[] initial = new int[blocks.length];
-		for (int i = 0; i < blocks.length; i++) {
-			short d = data != null ? data[i] : 0;
-			initial[i] = blocks[i] << 16 | d & 0xFFFF;
-		}
-		return initial;
-	}
+    private static int[] toIntArray(short[] blocks, short[] data) {
+        if (blocks == null) return null;
+        int[] initial = new int[blocks.length];
+        for (int i = 0; i < blocks.length; i++) {
+            short d = data != null ? data[i] : 0;
+            initial[i] = blocks[i] << 16 | d & 0xFFFF;
+        }
+        return initial;
+    }
 
     @Override
     public int getFullData(int x, int y, int z) {
@@ -238,11 +238,11 @@ public class AtomicPaletteBlockStore implements AtomicBlockStore {
 
     @Override
     public int[] getFullArray() {
-		int[] array = new int[length];
-		for (int i = 0; i < length; i++) {
-			array[i] = store.get(i);
-		}
-		return array;
+        int[] array = new int[length];
+        for (int i = 0; i < length; i++) {
+            array[i] = store.get(i);
+        }
+        return array;
     }
 
     @Override
