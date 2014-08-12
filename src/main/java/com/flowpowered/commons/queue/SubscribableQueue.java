@@ -37,15 +37,15 @@ import java.util.concurrent.atomic.AtomicLong;
  * {@link #addAll(java.util.Collection)} or {@link #offer(Object)}) will be added to all the thread queues, but any removal operation is confined to the thread's queue. A thread needs to subscribe to
  * the queue before being able to use it, using {@link #subscribe()}. The queue to use is selected from the calling thread, using {@link Thread#currentThread()}. Once done, a thread should unsubscribe
  * using {@link #unsubscribe()}.
- * <p/>
+ * <br>
  * When a thread constructs a new {@link SubscribableQueue}, it can declared itself as the publisher thread, and the operation of the following methods is limited to that thread only: {@link
  * #unsubscribeAll()}. The following operations operate on all queues if called by the publisher, else on the thread's own queue: {@link #add(Object)}, {@link #addAll(java.util.Collection)}, {@link
  * #offer(Object)}.
- * <p/>
+ * <br>
  * It's possible to add objects for only specific subscribers, as long as they have provided a non-null identifier object when using {@link #subscribe(Object)}, and that the publisher knows which
  * object corresponds to which thread. Calling {@link #add(Object, Object)}, {@link #addAll(java.util.Collection, Object)} or {@link #offer(Object, Object)} using a valid identifier will ensure that
  * the object is only passed to the desired subscriber.
- * <p/>
+ * <br>
  * Calls to methods can be expensive because of the cost of {@link Thread#currentThread()} on certain platforms. Using mass removal or addition operations ({@link #removeAll(java.util.Collection)},
  * {@link #addAll(java.util.Collection)}) is recommended when multiple items need to be removed or added.
  */

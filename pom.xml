@@ -83,11 +83,11 @@
     <repositories>
         <repository>
             <id>sonatype-nexus-releases</id>
-            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </repository>
         <repository>
             <id>sonatype-nexus-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -99,11 +99,11 @@
     <pluginRepositories>
         <pluginRepository>
             <id>sonatype-nexus-releases</id>
-            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </pluginRepository>
         <pluginRepository>
             <id>sonatype-nexus-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -115,16 +115,17 @@
     <dependencies>
         <!-- Transitive -->
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.3.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.flowpowered</groupId>
             <artifactId>flow-math</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.wolf480pl</groupId>
+            <artifactId>jline-log4j2-appender</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>jline</groupId>
@@ -133,16 +134,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.wolf480pl</groupId>
-            <artifactId>jline-log4j2-appender</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>3.0.3</version>
             <scope>compile</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>uk.org.lidalia</groupId>
-            <artifactId>lidalia-slf4j-ext</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -152,9 +152,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>net.sf.trove4j</groupId>
-            <artifactId>trove4j</artifactId>
-            <version>3.0.3</version>
+            <groupId>uk.org.lidalia</groupId>
+            <artifactId>lidalia-slf4j-ext</artifactId>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
         <!-- Testing only -->

@@ -88,21 +88,21 @@ public class ViewFrustum {
 
     /**
      * Returns a new array containing the vertices of the frustum. They are in the following order, given by the intersection of the planes:
-     * <p/>
+     * <br>
      * RIGHT - TOP - NEAR
-     * <p/>
+     * <br>
      * RIGHT - TOP - FAR
-     * <p/>
+     * <br>
      * RIGHT - BOTTOM - NEAR
-     * <p/>
+     * <br>
      * RIGHT - BOTTOM - FAR
-     * <p/>
+     * <br>
      * LEFT - TOP - NEAR
-     * <p/>
+     * <br>
      * LEFT - TOP - FAR
-     * <p/>
+     * <br>
      * LEFT - BOTTOM - NEAR
-     * <p/>
+     * <br>
      * LEFT - BOTTOM - FAR
      *
      * @return An array containing the frustum vertices

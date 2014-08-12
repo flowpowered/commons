@@ -254,7 +254,7 @@ public class AtomicVariableWidthArray implements Serializable {
     }
 
     /**
-     * Gets an array containing all the values in the array. The returned values are not guaranteed to be from the same time instant. <p/> If an array is provided and it is the correct length, then
+     * Gets an array containing all the values in the array. The returned values are not guaranteed to be from the same time instant.<br> If an array is provided and it is the correct length, then
      * that array will be used as the destination array.
      *
      * @param array the provided array
@@ -284,10 +284,9 @@ public class AtomicVariableWidthArray implements Serializable {
         return packed;
     }
 
-    /*
+    /**
      * Remaining methods use the above methods
      */
-
     public int addAndGet(int i, int delta) {
         return addAndGet(i, delta, false);
     }
