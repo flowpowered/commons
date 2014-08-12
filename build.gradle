@@ -56,9 +56,13 @@ repositories {
 
 // Project dependencies
 dependencies {
-    compile 'commons-io:commons-io:2.4'
+    compile 'com.flowpowered:flow-math:0.1.0-SNAPSHOT'
+    compile 'com.github.wolf480pl:jline-log4j2-appender:1.0.0-SNAPSHOT'
+    compile 'jline:jline:2.12'
+    compile 'net.sf.trove4j:trove4j:3.0.3'
     compile 'org.apache.commons:commons-lang3:3.3.2'
-    compile 'org.yaml:snakeyaml:1.13'
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'uk.org.lidalia:lidalia-slf4j-ext:1.0.0'
     testCompile 'junit:junit:4.11'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'org.powermock:powermock-api-mockito:1.5.5'

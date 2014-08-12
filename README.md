@@ -17,13 +17,20 @@ Or download the [latest zip archive](https://github.com/flow/flow-commons/archiv
 
 ## Dependencies
 We love open-source libraries! This project uses are few of them to make things easier. If you aren't using Maven or Gradle, you'll need these!
-* [org.apache.commons:commons-lang3](https://oss.sonatype.org/#nexus-search;gav~org.apache.commons~commons-lang3~~~)
 * [com.flowpowered:flow-math](https://oss.sonatype.org/#nexus-search;gav~com.flowpowered~flow-math~~~)
-* [jline:jline](https://oss.sonatype.org/#nexus-search;gav~jline~jline~~~)
 * [com.github.wolf480pl:jline-log4j2-appender](https://oss.sonatype.org/#nexus-search;gav~com.github.wolf480pl~jline-log4j2-appender~~~)
-* [uk.org.lidalia:lidalia-slf4j-ext](https://oss.sonatype.org/#nexus-search;gav~uk.org.lidalia~lidalia-slf4j-ext~~~)
-* [org.slf4j:slf4j-api](https://oss.sonatype.org/#nexus-search;gav~org.slf4j~slf4j-api~~~)
+* [jline:jline](https://oss.sonatype.org/#nexus-search;gav~jline~jline~~~)
 * [net.sf.trove4j:trove4j](https://oss.sonatype.org/#nexus-search;gav~net.sf.trove4j~trove4j~~~)
+* [org.apache.commons:commons-lang3](https://oss.sonatype.org/#nexus-search;gav~org.apache.commons~commons-lang3~~~)
+* [org.slf4j:slf4j-api](https://oss.sonatype.org/#nexus-search;gav~org.slf4j~slf4j-api~~~)
+* [uk.org.lidalia:lidalia-slf4j-ext](https://oss.sonatype.org/#nexus-search;gav~uk.org.lidalia~lidalia-slf4j-ext~~~)
+
+## Test Dependencies
+The following dependencies are only needed if you compiling the tests included with this project. Gotta test 'em all!
+* [junit:junit](https://oss.sonatype.org/#nexus-search;gav~junit~junit~~~)
+* [org.hamcrest:hamcrest-library](https://oss.sonatype.org/#nexus-search;gav~org.hamcrest~hamcrest-library~~~)
+* [org.powermock:powermock-api-mockito](https://oss.sonatype.org/#nexus-search;gav~org.powermock~powermock-api-mockito~~~)
+* [org.powermock:powermock-module-junit4](https://oss.sonatype.org/#nexus-search;gav~org.powermock~powermock-module-junit4~~~)
 
 ## Building from Source
 This project can be built with the _latest_ [Java Development Kit](http://oracle.com/technetwork/java/javase/downloads) and [Maven](http://maven.apache.org/) or [Gradle](http://www.gradle.org/). Maven and Gradle are used to simplify dependency management, but using either of them is optional.
@@ -56,7 +63,7 @@ If you do not already have the required repo in your repository list, you will n
 
     <repository>
         <id>sonatype-nexus</id>
-        <url>https://oss.sonatype.org/content/groups/public/</url>
+        <url>https://oss.sonatype.org/content/groups/public</url>
     </repository>
 
 If you're using [Gradle](http://www.gradle.org/) to manage project dependencies, simply include the following in your `build.gradle` file:
@@ -72,7 +79,6 @@ If you're using [Gradle](http://www.gradle.org/) to manage project dependencies,
     dependencies {
         compile 'com.flowpowered:flow-commons:0.1.0-SNAPSHOT'
     }
-
 
 If you'd prefer to manually import the latest .jar file, you can get it [here](https://github.com/flow/flow-commons/releases).
 
