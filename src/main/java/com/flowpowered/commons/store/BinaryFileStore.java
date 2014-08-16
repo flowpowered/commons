@@ -28,10 +28,9 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -39,24 +38,24 @@ import java.util.Map.Entry;
  * This implements a SimpleStore that is stored in memory. The save and load methods can be used to write the map to a binary file.
  */
 public class BinaryFileStore extends MemoryStore<Integer> {
-    private File file;
+    private Path path;
     private boolean dirty = true;
 
-    public BinaryFileStore(File file) {
+    public BinaryFileStore(Path path) {
         super();
-        this.file = file;
+        this.path = path;
     }
 
     public BinaryFileStore() {
         this(null);
     }
 
-    public synchronized void setFile(File file) {
-        this.file = file;
+    public synchronized void setPath(Path path) {
+        this.path = path;
     }
 
-    public synchronized File getFile() {
-        return file;
+    public synchronized Path getPath() {
+        return path;
     }
 
     @Override
@@ -74,7 +73,7 @@ public class BinaryFileStore extends MemoryStore<Integer> {
         boolean saved = true;
         DataOutputStream out = null;
         try {
-            out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+            out = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(path)));
             Iterator<Entry<String, Integer>> itr = super.getEntrySet().iterator();
 
             while (itr.hasNext()) {
@@ -106,7 +105,7 @@ public class BinaryFileStore extends MemoryStore<Integer> {
         boolean loaded = true;
         DataInputStream in = null;
         try {
-            in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+            in = new DataInputStream(new BufferedInputStream(Files.newInputStream(path)));
 
             boolean eof = false;
             while (!eof) {

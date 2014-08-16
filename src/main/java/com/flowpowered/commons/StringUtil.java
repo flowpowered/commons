@@ -23,7 +23,6 @@
  */
 package com.flowpowered.commons;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -91,26 +90,6 @@ public class StringUtil {
     public static <T extends Named> Collection<T> matchName(Collection<T> values, String name) {
         List<T> result = new ArrayList<>();
         for (T value : values) {
-            if (value == null) {
-                continue;
-            }
-            if (startsWithIgnoreCase(value.getName(), name)) {
-                result.add(value);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Matches a file name using a name
-     *
-     * @param values to look into
-     * @param name to match against
-     * @return a collection of values that matched
-     */
-    public static Collection<File> matchFile(Collection<File> values, String name) {
-        List<File> result = new ArrayList<>();
-        for (File value : values) {
             if (value == null) {
                 continue;
             }

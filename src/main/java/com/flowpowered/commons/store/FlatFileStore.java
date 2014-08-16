@@ -23,29 +23,34 @@
  */
 package com.flowpowered.commons.store;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import com.flowpowered.commons.FileUtil;
+import com.flowpowered.commons.PathUtil;
 
 /**
  * This implements a SimpleStore that is stored in memory. The save and load methods can be used to write the map to a File.
  */
 public class FlatFileStore<T> extends MemoryStore<T> {
-    private final File file;
+    private final Path path;
     private boolean dirty = false;
     private final Class<?> clazz; // preserve class, so parser knows what to do
 
-    public FlatFileStore(File file, Class<?> clazz) {
+    public FlatFileStore(Path path, Class<?> clazz) {
         super();
         this.clazz = clazz;
-        this.file = file;
-        if (file != null) {
-            if (!file.exists()) {
-                if (!FileUtil.createFile(file)) {
+        this.path = path;
+        if (path != null) {
+            if (!Files.exists(path)) {
+                try {
+                    Files.createFile(path);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
             }
         }
@@ -64,7 +69,7 @@ public class FlatFileStore<T> extends MemoryStore<T> {
         }
 
         Collection<String> strings = getStrings();
-        boolean saved = FileUtil.stringToFile(strings, file);
+        boolean saved = PathUtil.stringToFile(strings, path);
         if (saved) {
             dirty = false;
         }
@@ -74,7 +79,7 @@ public class FlatFileStore<T> extends MemoryStore<T> {
 
     @Override
     public synchronized boolean load() {
-        Collection<String> strings = FileUtil.fileToString(file);
+        Collection<String> strings = PathUtil.fileToString(path);
         if (strings == null) {
             return false;
         }
