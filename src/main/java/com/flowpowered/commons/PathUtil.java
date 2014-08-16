@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -146,7 +147,7 @@ public class PathUtil {
      */
     public static boolean stringToFile(Collection<String> strings, Path path) {
 
-        try (BufferedWriter bw = Files.newBufferedWriter(path)) {
+        try (BufferedWriter bw = Files.newBufferedWriter(path, Charset.defaultCharset())) {
             for (String line : strings) {
                 bw.write(line);
                 bw.newLine();
@@ -170,7 +171,7 @@ public class PathUtil {
     public static Collection<String> fileToString(Path path) {
         String line;
 
-        try (BufferedReader br = Files.newBufferedReader(path)) {
+        try (BufferedReader br = Files.newBufferedReader(path, Charset.defaultCharset())) {
             Collection<String> strings = new LinkedList<>();
             while ((line = br.readLine()) != null) {
                 strings.add(line);
