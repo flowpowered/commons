@@ -24,14 +24,13 @@
 package com.flowpowered.commons.store;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
-
-import com.flowpowered.commons.PathUtil;
 
 /**
  * This implements a SimpleStore that is stored in memory. The save and load methods can be used to write the map to a File.
@@ -69,18 +68,21 @@ public class FlatFileStore<T> extends MemoryStore<T> {
         }
 
         Collection<String> strings = getStrings();
-        boolean saved = PathUtil.stringToFile(strings, path);
-        if (saved) {
+        try {
+            Files.write(path, strings, Charset.defaultCharset());
             dirty = false;
+            return true;
+        } catch (IOException e) {
+            return false;
         }
-
-        return saved;
     }
 
     @Override
     public synchronized boolean load() {
-        Collection<String> strings = PathUtil.fileToString(path);
-        if (strings == null) {
+        Collection<String> strings;
+        try {
+            strings = Files.readAllLines(path, Charset.defaultCharset());
+        } catch (IOException e) {
             return false;
         }
         boolean loaded = processStrings(strings);
