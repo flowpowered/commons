@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  *
  * @param <T> the value type
  */
-public class TripleIntObjectReferenceArrayMap<T> implements TripleIntObjectMap<T> {
+public class TripleIntObjectReferenceArrayMap<T> {
 
     private final int bits;
     private final int doubleBits;
@@ -49,7 +49,6 @@ public class TripleIntObjectReferenceArrayMap<T> implements TripleIntObjectMap<T
     private final LinkedHashSet<T> values;
     private final LinkedHashSet<LeafEntry> leafEntries;
     private final AtomicReference<Collection<T>> valuesSnapshot = new AtomicReference<>(null);
-    private int removed = 0;
 
     public TripleIntObjectReferenceArrayMap(int bits) {
         this(bits, 1);
@@ -67,7 +66,6 @@ public class TripleIntObjectReferenceArrayMap<T> implements TripleIntObjectMap<T
         this.leafEntries = new LinkedHashSet<>();
     }
 
-    @Override
     public T get(int x, int y, int z) {
         Entry<T> entry = getEntryRaw(x, y, z);
         if (entry != null) {
@@ -77,14 +75,12 @@ public class TripleIntObjectReferenceArrayMap<T> implements TripleIntObjectMap<T
         }
     }
 
-    @Override
     public synchronized T remove(int x, int y, int z) {
         Entry<T> entry = getEntryRaw(x, y, z);
         if (entry != null) {
             T value = entry.remove();
             if (value != null) {
                 valuesSnapshot.set(null);
-                removed++;
                 if (!values.remove(value)) {
                     throw new IllegalStateException("Item removed from map was not in item set");
                 }
@@ -95,14 +91,12 @@ public class TripleIntObjectReferenceArrayMap<T> implements TripleIntObjectMap<T
         }
     }
 
-    @Override
     public synchronized boolean remove(int x, int y, int z, T value) {
         Entry<T> entry = getEntryRaw(x, y, z);
         if (entry != null) {
             boolean b = entry.remove(value);
             if (b) {
                 valuesSnapshot.set(null);
-                removed++;
                 if (!values.remove(value)) {
                     throw new IllegalStateException("Item removed from map was not in item set");
                 }
@@ -113,7 +107,6 @@ public class TripleIntObjectReferenceArrayMap<T> implements TripleIntObjectMap<T
         }
     }
 
-    @Override
     public synchronized T put(int x, int y, int z, T value) {
         if (value == null) {
             throw new NullPointerException("Null values are not permitted");
@@ -136,7 +129,6 @@ public class TripleIntObjectReferenceArrayMap<T> implements TripleIntObjectMap<T
         }
     }
 
-    @Override
     public synchronized T putIfAbsent(int x, int y, int z, T value) {
         if (value == null) {
             throw new NullPointerException("Null values are not permitted");
@@ -156,7 +148,6 @@ public class TripleIntObjectReferenceArrayMap<T> implements TripleIntObjectMap<T
         }
     }
 
-    @Override
     public Collection<T> valueCollection() {
         Collection<T> newValues = this.valuesSnapshot.get();
         if (newValues != null) {
