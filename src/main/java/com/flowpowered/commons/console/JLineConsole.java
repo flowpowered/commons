@@ -49,7 +49,21 @@ import com.flowpowered.commons.InterruptableInputStream;
 public class JLineConsole {
     public static final int INPUT_THREAD_YIELD = -1;
     public static final int INPUT_THREAD_BLOCK = -2;
-    public static final int INPUT_THREAD_DEFAULT = SystemUtils.IS_OS_WINDOWS ? INPUT_THREAD_BLOCK : 10;
+    public static final int INPUT_THREAD_DEFAULT = Integer.getInteger("com.flowpowered.commons.console.inThreadSleepTime", isWindows() ? INPUT_THREAD_BLOCK : 10);
+
+    protected static boolean isWindows() {
+        String prop = System.getProperty("com.flowpowered.commons.console.forceOs");
+        if (prop != null) {
+            prop = prop.toLowerCase();
+            if (prop.contains("windows")) {
+                return true;
+            }
+            if (prop.contains("unix")) {
+                return false;
+            }
+        }
+        return SystemUtils.IS_OS_WINDOWS;
+    }
 
     private final ConsoleReader reader;
     private final AtomicBoolean closed = new AtomicBoolean(false);
@@ -72,7 +86,7 @@ public class JLineConsole {
     public JLineConsole(CommandCallback callback, Completer completer, Logger logger, OutputStream out, InputStream in) {
         this(callback, completer, logger, INPUT_THREAD_DEFAULT, out, in);
     }
-    
+
     public JLineConsole(CommandCallback callback, Completer completer, Logger logger, int inThreadSleepTime, OutputStream out, InputStream in) {
         this.callback = callback;
         if (logger == null) {
@@ -86,7 +100,7 @@ public class JLineConsole {
         if (in == null) {
             in = new FileInputStream(FileDescriptor.in);
         }
-        
+
         if (inThreadSleepTime != INPUT_THREAD_BLOCK) {
             in = new InterruptableInputStream(in, inThreadSleepTime);
         }
