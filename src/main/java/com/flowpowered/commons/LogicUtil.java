@@ -36,7 +36,7 @@ public class LogicUtil {
      * @return the input collection
      */
     public static <T extends Collection<?>> T removeDuplicates(T input) {
-        List<Object> unique = new ArrayList<>();
+        List<Object> unique = new ArrayList<>(input.size());
         for (Iterator<?> iter = input.iterator(); iter.hasNext(); ) {
             Object next = iter.next();
             if (unique.contains(next)) {
