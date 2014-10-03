@@ -40,8 +40,10 @@ public class StringUtil {
         if (input == null || prefix == null || prefix.length() > input.length()) {
             return false;
         } else {
-            for (int i = 0; i < prefix.length(); i++) {
-                if (!equalsIgnoreCase(prefix.charAt(i), input.charAt(i))) {
+            final char[] inputCharArray = input.toCharArray();
+            final char[] prefixCharArray = input.toCharArray();
+            for (int i = 0; i < prefixCharArray.length; i++) {
+                if (!equalsIgnoreCase(prefixCharArray[i], inputCharArray[i])) {
                     return false;
                 }
             }
