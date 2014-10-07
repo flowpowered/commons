@@ -41,7 +41,7 @@ public class StringUtil {
             return false;
         } else {
             final char[] inputCharArray = input.toCharArray();
-            final char[] prefixCharArray = input.toCharArray();
+            final char[] prefixCharArray = prefix.toCharArray();
             for (int i = 0; i < prefixCharArray.length; i++) {
                 if (!equalsIgnoreCase(prefixCharArray[i], inputCharArray[i])) {
                     return false;
