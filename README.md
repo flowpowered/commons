@@ -1,4 +1,4 @@
-# Flow Commons [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)][License] [![Flattr this](http://img.shields.io/badge/flattr-donate-lightgrey.svg?style=flat)][Donate] [![Build Status](http://img.shields.io/travis/flow/commons/master.svg?style=flat)](https://travis-ci.org/flow/commons) [![Coverage Status](http://img.shields.io/coveralls/flow/commons/master.svg?style=flat)](https://coveralls.io/r/flow/commons)
+# Flow Commons [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)][License] [![Flattr this](http://img.shields.io/badge/flattr-donate-lightgrey.svg?style=flat)][Donate] [![Build Status](http://img.shields.io/travis/flow/commons/develop.svg?style=flat)](https://travis-ci.org/flow/commons) [![Coverage Status](http://img.shields.io/coveralls/flow/commons/develop.svg?style=flat)](https://coveralls.io/r/flow/commons)
 
 A library for Java that provides re-usable components commonly used by Flow libraries.
 
@@ -13,7 +13,7 @@ The latest and greatest source can be found here on [GitHub](https://github.com/
 
     git clone git://github.com/flow/commons.git
 
-Or download the [latest zip archive](https://github.com/flow/commons/archive/master.zip).
+Or download the latest [development archive](https://github.com/flow/commons/archive/develop.zip) or the latest [stable archive](https://github.com/flow/commons/archive/master.zip).
 
 ## Dependencies
 We love open-source libraries! This project uses are few of them to make things easier. If you aren't using Maven or Gradle, you'll need these!
