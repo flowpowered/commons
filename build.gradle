@@ -2,8 +2,9 @@
 defaultTasks 'clean', 'licenseFormat', 'build', 'install'
 
 // Apply plugins
-apply plugin: 'cobertura'
-apply plugin: 'coveralls'
+apply plugin: 'java'
+apply plugin: 'cobertura' // Coveralls dependency
+apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'license'
 apply plugin: 'maven'
 apply plugin: 'signing'
@@ -15,12 +16,12 @@ archivesBaseName = 'flow-commons'
 version = '0.1.0-SNAPSHOT'
 ext.packaging = 'jar'
 ext.inceptionYear = '2013'
-ext.url = 'http://flowpowered.com'
-ext.description = 'Commons library for the Flow collection.'
+ext.url = 'https://flowpowered.com'
+ext.description = 'A library for Java that provides re-usable components commonly used by Flow libraries.'
 
 // Organization information
-ext.organization = 'Spout LLC'
-ext.organizationUrl = 'https://spout.org'
+ext.organization = 'Flow Powered'
+ext.organizationUrl = 'https://flowpowered.com'
 
 // Build properties
 ext.buildNumber = project.hasProperty('buildNumber') ? buildNumber : '0'
@@ -34,13 +35,13 @@ buildscript {
         mavenCentral()
         maven {
             name = 'sonatype-nexus'
-            url = 'https://oss.sonatype.org/content/groups/public'
+            url = 'https://oss.sonatype.org/content/groups/public/'
         }
     }
     dependencies {
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.9.0'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:0.5.0'
-        classpath 'net.saliman:gradle-cobertura-plugin:2.2.4' // Coveralls plugin dependency
+        classpath 'net.saliman:gradle-cobertura-plugin:2.2.5' // Coveralls dependency
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
     }
 }
 
@@ -50,23 +51,23 @@ repositories {
     mavenCentral()
     maven {
         name = 'sonatype-nexus'
-        url = 'https://oss.sonatype.org/content/groups/public'
+        url = 'https://oss.sonatype.org/content/groups/public/'
     }
 }
 
 // Project dependencies
 dependencies {
-    compile 'com.flowpowered:flow-math:0.1.0-SNAPSHOT'
-    compile 'com.github.wolf480pl:jline-log4j2-appender:1.0.0-SNAPSHOT'
+    compile 'com.flowpowered:flow-math:1.0.0'
+    compile 'com.github.wolf480pl:jline-log4j2-appender:1.0.0'
     compile 'jline:jline:2.12'
     compile 'net.sf.trove4j:trove4j:3.0.3'
     compile 'org.apache.commons:commons-lang3:3.3.2'
-    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'org.slf4j:slf4j-api:1.7.8'
     compile 'uk.org.lidalia:lidalia-slf4j-ext:1.0.0'
-    testCompile 'junit:junit:4.11'
+    testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
-    testCompile 'org.powermock:powermock-api-mockito:1.5.5'
-    testCompile 'org.powermock:powermock-module-junit4:1.5.5'
+    testCompile 'org.powermock:powermock-api-mockito:1.6.0'
+    testCompile 'org.powermock:powermock-module-junit4:1.6.0'
 }
 
 // Filter, process, and include resources
@@ -107,6 +108,15 @@ jar.manifest.mainAttributes(
         'Specification-Title': projectName,
         'Specification-Version': version + '+' + ciSystem + '-b' + buildNumber + '.git-' + commit,
         'Specification-Vendor': organization + ' - ' + organizationUrl)
+
+// Javadoc doclint configuration
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
+        }
+    }
+}
 
 // Coveralls report configuration
 cobertura.coverageFormats = ['html', 'xml'] // Coveralls requires xml format
@@ -166,15 +176,15 @@ uploadArchives {
             description project.ext.description
 
             scm {
-                connection 'scm:git:git://github.com/flow/flow-commons.git'
-                developerConnection 'scm:git:ssh://git@github.com:flow/flow-commons.git'
-                url 'https://github.com/flow/flow-commons'
+                connection 'scm:git:git://github.com/flow/commons.git'
+                developerConnection 'scm:git:ssh://git@github.com:flow/commons.git'
+                url 'https://github.com/flow/commons'
             }
 
             licenses {
                 license {
                     name 'MIT License'
-                    url 'https://tldrlegal.com/license/mit-license'
+                    url 'https://tldrlegal.com/l/mit'
                     distribution 'repo'
                 }
             }
@@ -185,6 +195,11 @@ uploadArchives {
             }
 
             developers {
+                developer {
+                    id 'DDoS'
+                    name 'Aleksi Sapon'
+                    email 'qctechs@gmail.com'
+                }
                 developer {
                     id 'kitskub'
                     name 'Jack Huey'
