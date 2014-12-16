@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <https://spout.org/>
+ * Copyright (c) 2013 Flow Powered <https://flowpowered.com/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -201,7 +201,7 @@ public class StringUtil {
         }
 
         /*
-          The difference between this impl. and the previous is that, rather
+           The difference between this impl. and the previous is that, rather
            than creating and retaining a matrix of size s.length()+1 by t.length()+1,
            we maintain two single-dimensional arrays of length s.length()+1.  The first, d,
            is the 'current working' distance array that maintains the newest distance cost
@@ -226,17 +226,17 @@ public class StringUtil {
             return n;
         }
 
-        int p[] = new int[n + 1]; //'previous' cost array, horizontally
-        int d[] = new int[n + 1]; // cost array, horizontally
-        int _d[]; //placeholder to assist in swapping p and d
+        int p[] = new int[n + 1]; // 'Previous' cost array, horizontally
+        int d[] = new int[n + 1]; // Cost array, horizontally
+        int _d[]; // Placeholder to assist in swapping p and d
 
-        // indexes into strings s and t
-        int i; // iterates through s
-        int j; // iterates through t
+        // Indexes into strings s and t
+        int i; // Iterates through s
+        int j; // Iterates through t
 
         char t_j; // jth character of t
 
-        int cost; // cost
+        int cost; // Cost
 
         for (i = 0; i <= n; i++) {
             p[i] = i;
@@ -248,18 +248,17 @@ public class StringUtil {
 
             for (i = 1; i <= n; i++) {
                 cost = s.charAt(i - 1) == t_j ? 0 : 1;
-                // minimum of cell to the left+1, to the top+1, diagonally left and up +cost
+                // Minimum of cell to the left+1, to the top+1, diagonally left and up +cost
                 d[i] = Math.min(Math.min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
             }
 
-            // copy current distance counts to 'previous row' distance counts
+            // Copy current distance counts to 'previous row' distance counts
             _d = p;
             p = d;
             d = _d;
         }
 
-        // our last action in the above loop was to switch d and p, so p now
-        // actually has the most recent cost counts
+        // Our last action in the above loop was to switch d and p, so p now actually has the most recent cost counts
         return p[n];
     }
 

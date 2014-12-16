@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <https://spout.org/>
+ * Copyright (c) 2013 Flow Powered <https://flowpowered.com/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ import com.flowpowered.commons.datatable.delta.DeltaMap;
  * This is a {@link SerializableMap} that also manages a dirty state.
  */
 public interface ManagedMap extends SerializableMap {
-
     /**
      * This will return a map containing any modified elements. Any sub-maps will also be DeltaMaps if applicable.
      *

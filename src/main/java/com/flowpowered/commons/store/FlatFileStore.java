@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <https://spout.org/>
+ * Copyright (c) 2013 Flow Powered <https://flowpowered.com/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ import java.util.Map.Entry;
 public class FlatFileStore<T> extends MemoryStore<T> {
     private final Path path;
     private boolean dirty = false;
-    private final Class<?> clazz; // preserve class, so parser knows what to do
+    private final Class<?> clazz; // Preserve class, so parser knows what to do
 
     public FlatFileStore(Path path, Class<?> clazz) {
         super();

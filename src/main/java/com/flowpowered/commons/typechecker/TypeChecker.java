@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <https://spout.org/>
+ * Copyright (c) 2013 Flow Powered <https://flowpowered.com/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,9 +29,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-
 public class TypeChecker<T> {
-
     protected final Class<T> clazz;
 
     public TypeChecker(Class<T> clazz) {

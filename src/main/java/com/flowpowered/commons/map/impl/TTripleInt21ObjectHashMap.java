@@ -1,7 +1,7 @@
 /*
  * This file is part of Flow Commons, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2013 Spout LLC <https://spout.org/>
+ * Copyright (c) 2013 Flow Powered <https://flowpowered.com/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,13 @@ package com.flowpowered.commons.map.impl;
 
 import java.util.Collection;
 
-import com.flowpowered.commons.hashing.Int21TripleHashed;
-import com.flowpowered.commons.map.TripleIntObjectMap;
-
 import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
+
+import com.flowpowered.commons.hashing.Int21TripleHashed;
+import com.flowpowered.commons.map.TripleIntObjectMap;
 
 /**
  * A simplistic map that supports a 3 21 bit integers for keys, using a trove long Object hashmap in the backend. 1 bit is wasted.
