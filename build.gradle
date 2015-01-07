@@ -16,7 +16,7 @@ archivesBaseName = 'flow-commons'
 version = '1.0.1-SNAPSHOT'
 ext.packaging = 'jar'
 ext.inceptionYear = '2013'
-ext.url = 'https://flowpowered.com'
+ext.url = 'https://flowpowered.com/commons'
 ext.description = 'A library for Java that provides re-usable components commonly used by Flow libraries.'
 
 // Organization information
